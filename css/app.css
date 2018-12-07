@@ -6844,6 +6844,9 @@ code {
 footer {
   margin-bottom: 6ex; }
 
+li {
+  margin: 10px; }
+
 /* End Section */
 /* Section: Bootstrap hacks */
 .tooltip-inner {
@@ -6856,6 +6859,10 @@ footer {
 
 .pubdate, .update {
   font-style: italic; }
+
+img.block-image {
+  display: block;
+  margin: 0 auto; }
 
 .update {
   margin-top: -1ex; }
@@ -6875,6 +6882,19 @@ footer {
 
 article.post-summary {
   padding-bottom: 2ex; }
+
+.filebox > .filename {
+  padding-bottom: 0.1rem;
+  padding-top: 0.1rem;
+  padding-left: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  background: #f6f6f6;
+  font-family: triplicate-t4c, Consolas, Courier;
+  font-size: 1rem;
+  color: black;
+  font-weight: 700;
+  position: relative;
+  top: 1px; }
 
 .highlight {
   margin-bottom: 2ex;
@@ -7164,7 +7184,7 @@ SPAN.paren:before {
 /* End Section */
 /* Section: Highlight */
 PRE.racket SPAN.highlight-focus {
-  background-color: #dee2e6; }
+  background-color: yellow; }
 
 PRE.racket SPAN.highlight-add {
   background-color: #acf2bd; }

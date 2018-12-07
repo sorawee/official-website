@@ -1,1 +1,1 @@
-#hash()
+#hash(("blog/2017/01-03-rainbow-parens.poly.pm" . (racket blog pygments)))
