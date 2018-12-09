@@ -6817,7 +6817,10 @@ label {
   cursor: pointer; }
 
 h2 {
-  font-size: 150%; }
+  font-size: 1.76rem; }
+
+h3 {
+  font-size: 1.54rem; }
 
 /* from https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector/Keyboard_shortcuts */
 kbd {
@@ -6934,16 +6937,10 @@ article.post-summary {
 .dblp-icon {
   width: 1.5rem; }
 
-/* Section: inline list */
-.inline-itemlist {
+/* Section: margin-note */
+.margin-note ul {
   padding-left: 1rem; }
 
-.inline-itemlist > .inline-item {
-  list-style-position: inside;
-  display: list-item; }
-
-/* End Section */
-/* Section: margin-note */
 .margin-note-number {
   counter-increment: margin-note-counter; }
 
