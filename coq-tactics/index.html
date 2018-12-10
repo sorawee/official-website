@@ -54,61 +54,87 @@
       <div id="content-title--coq-tactics-index-html"
            class="row content-type--page">
         <!-- Main column -->
-        <div><decoded-root><h1>Yet Another Coq Tactic Index</h1><h3 class="coq-tactic"><code>reflexivity</code></h3><div class="coq-usage"><b>Usage: </b><code>reflexivity</code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal which is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation. The tactic also works if the goal needs an <code>intros</code> to be in the form <code>‹t› = ‹u›</code>.</div><p>In this example we will apply <code>reflexivity</code> to prove that for every natural number <mathjax>$x$</mathjax>, if <mathjax>$1 = 1$</mathjax> then <mathjax>$(3 + 2) + x = (2 + 3) + x$</mathjax>.</p><div class="coq-box row no-gutters" id="coq-box-1"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+        <div><decoded-root><h1>Yet Another Coq Tactic Index</h1><h3 class="coq-tactic"><code>reflexivity</code></h3><div class="coq-usage"><b>Usage: </b><code>reflexivity</code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal that is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation. The tactic calls <code>intros</code> automatically before the actual solve.</div><p>In this example we will apply <code>reflexivity</code> to prove that for every natural number <mathjax>$x$</mathjax>, if <mathjax>$1 = 1$</mathjax> then <mathjax>$(3 + 2) + x = (2 + 3) + x$</mathjax>.</p><div class="coq-box row no-gutters" id="coq-box-1"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
-5</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-4"><span class="show-all show-3"><span class="show-all show-2"><span class="show-all show-1"><span></span><span class="kn">Lemma</span> <span class="n">complex_math</span><span class="o">:</span>
-  <span class="k">forall</span> <span class="n">x</span><span class="o">,</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="o">)</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="o">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">)</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span></span>
+5
+6
+7</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-5"><span class="show-all show-4"><span class="show-all show-3"><span class="show-all show-2"><span class="show-all show-1"><span></span><span class="kn">Lemma</span> <span class="n">complex_math</span><span class="o">:</span>
+  <span class="k">forall</span> <span class="o">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">),</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="o">)</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="o">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">)</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
+  <span class="k">intros</span><span class="o">.</span></span>
   <span class="highlight-focus"><span class="kp">reflexivity</span><span class="o">.</span></span></span>
+  <span class="c">(* reflexivity alone (without intros) also works *)</span>
 <span class="kn">Qed</span><span class="o">.</span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-0"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-1"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">6</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">5</span><span class="o">)</span>
 
   <span class="o">============================</span>
   <span class="k">forall</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">x</span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-2"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">6</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">5</span><span class="o">)</span>
 
   <span class="o">============================</span>
   <span class="k">forall</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">x</span>
-</pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-3"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-1"><span></span><span class="n">No</span> <span class="n">more</span> <span class="n">subgoals</span><span class="o">.</span></span>
-</pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-4"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+</pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-3"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">7</span><span class="o">)</span>
+
+  <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span>
+  <span class="n">H</span> <span class="o">:</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="o">============================</span>
+  <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">x</span>
+</pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-4"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-1"><span></span><span class="n">No</span> <span class="n">more</span> <span class="n">subgoals</span><span class="o">.</span></span>
+</pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-5"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-1"><span></span><span class="n">No</span> <span class="n">more</span> <span class="n">subgoals</span><span class="o">.</span></span>
 
 
 <span class="n">complex_math</span> <span class="k">is</span> <span class="n">defined</span>
-</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="5" data-refid="1"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><p>Note that while Coq can compute concrete values, making it possible to reason that both <code>(3 + 2) + x</code> and <code>(2 + 3) + x</code> reduce to <code>5 + x</code> and therefore are equal, it cannot compute non-concrete values. Hence, <code>reflexivity</code> can’t prove the goal that needs non-trivial reasoning, like commutativity of natural numbers that involves non-concrete values.</p><div class="coq-box row no-gutters" id="coq-box-2"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="6" data-refid="1"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><p>Note that while Coq can compute concrete values, making it possible to reason that both <code>(3 + 2) + x</code> and <code>(2 + 3) + x</code> reduce to <code>5 + x</code> and therefore are equal, it cannot compute non-concrete values. Hence, <code>reflexivity</code> can’t prove the goal that needs non-trivial reasoning, like commutativity of natural numbers that involves non-concrete values.</p><div class="coq-box row no-gutters" id="coq-box-2"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-3"><span class="show-all show-2"><span class="show-all show-1"><span></span><span class="kn">Lemma</span> <span class="n">commutativity_is_not_trivial</span><span class="o">:</span>
-  <span class="k">forall</span> <span class="n">x</span><span class="o">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="o">.</span></span>
+4
+5</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-4"><span class="show-all show-3"><span class="show-all show-2"><span class="show-all show-1"><span></span><span class="kn">Lemma</span> <span class="n">commutativity_is_not_trivial</span><span class="o">:</span>
+  <span class="k">forall</span> <span class="o">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">),</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
+  <span class="k">intros</span><span class="o">.</span></span>
   <span class="highlight-focus"><span class="kp">reflexivity</span><span class="o">.</span></span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-0"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-1"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">4</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">3</span><span class="o">)</span>
 
   <span class="o">============================</span>
   <span class="k">forall</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-2"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">4</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">3</span><span class="o">)</span>
 
   <span class="o">============================</span>
   <span class="k">forall</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-3"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">4</span><span class="o">)</span>
+
+  <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span>
+  <span class="o">============================</span>
+  <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-4"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
@@ -119,14 +145,14 @@
 <span class="n">Error</span><span class="o">:</span> <span class="n">In</span> <span class="n">environment</span>
 <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span>
 <span class="n">Unable</span> <span class="n">to</span> <span class="n">unify</span> <span class="s2">"x + 1"</span> <span class="k">with</span> <span class="s2">"1 + x"</span><span class="o">.</span></span>
-</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="4" data-refid="2"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><p>The above lemma can be solved by performing an <code>induction</code> on <code>x</code>, or by applying lemmas like <code>Nat.add_comm</code>.</p><h3 class="coq-tactic"><code>assumption</code></h3><div class="coq-usage"><b>Usage: </b><code>assumption</code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal which existed already in the context after some computation.</div><p>In this example we will use <code>assumption</code> to prove that if <mathjax>$x = (1 + 2) + y$</mathjax>, then <mathjax>$x = 3 + y$</mathjax>.</p><div class="coq-box row no-gutters" id="coq-box-3"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="5" data-refid="2"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><p>The above lemma can be solved by performing an <code>induction</code> on <code>x</code>, or by applying lemmas like <code>Nat.add_comm</code>.</p><h3 class="coq-tactic"><code>assumption</code></h3><div class="coq-usage"><b>Usage: </b><code>assumption</code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal that existed already in the context after some computation.</div><p>In this example we will use <code>assumption</code> to prove that if <mathjax>$x = (1 + 2) + y$</mathjax>, then <mathjax>$x = 3 + y$</mathjax>.</p><div class="coq-box row no-gutters" id="coq-box-3"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
 5
 6
 7</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-5"><span class="show-all show-4"><span class="show-all show-3"><span class="show-all show-2"><span class="show-all show-1"><span></span><span class="kn">Lemma</span> <span class="n">another_complex_math</span><span class="o">:</span>
-  <span class="k">forall</span> <span class="n">x</span> <span class="n">y</span><span class="o">,</span> <span class="n">x</span> <span class="o">=</span> <span class="o">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">)</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">y</span><span class="o">.</span></span>
+  <span class="k">forall</span> <span class="o">(</span><span class="n">x</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">),</span> <span class="n">x</span> <span class="o">=</span> <span class="o">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">)</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">y</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
   <span class="k">intros</span><span class="o">.</span></span>
   <span class="highlight-focus"><span class="kp">assumption</span><span class="o">.</span></span></span>
@@ -136,14 +162,14 @@
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-1"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">8</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">5</span><span class="o">)</span>
 
   <span class="o">============================</span>
   <span class="k">forall</span> <span class="n">x</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">y</span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-2"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">8</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">5</span><span class="o">)</span>
 
   <span class="o">============================</span>
   <span class="k">forall</span> <span class="n">x</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">y</span>
@@ -152,7 +178,7 @@
 3
 4
 5
-6</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">11</span><span class="o">)</span>
+6</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">8</span><span class="o">)</span>
 
   <span class="n">x</span><span class="o">,</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span>
   <span class="n">H</span> <span class="o">:</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span>
@@ -166,45 +192,49 @@
 
 
 <span class="n">another_complex_math</span> <span class="k">is</span> <span class="n">defined</span>
-</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="6" data-refid="3"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><h3 class="coq-tactic"><code>discriminate</code></h3><div class="coq-usage"><b>Usage: </b><code>discriminate</code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> any goal because the context contains a <em>false equality</em> due to <em>mismatched constructors</em> after some computation.</div><p>In this example we will use <code>discriminate</code> to prove that for any natural <mathjax>$y$</mathjax>, if <mathjax>$1 = 2 + y$</mathjax>, then <code>true = false</code>. Of course, the premise can’t be true because the lowest possible value of <mathjax>$y$</mathjax> is <mathjax>$0$</mathjax>, and even then <mathjax>$1 &lt; 2 + 0$</mathjax>.</p><div class="coq-box row no-gutters" id="coq-box-4"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="6" data-refid="3"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><h3 class="coq-tactic"><code>discriminate</code></h3><div class="coq-usage"><b>Usage: </b><code>discriminate</code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> any goal because the context contains a <em>false equality</em> due to <em>mismatched constructors</em> after some computation. The tactic calls <code>intros</code> automatically before the actual solve.</div><p>In this example we will use <code>discriminate</code> to prove that for any natural <mathjax>$y$</mathjax>, if <mathjax>$1 = 2 + y$</mathjax>, then any proposition is true. Of course, the premise can’t be true because the lowest possible value of <mathjax>$y$</mathjax> is <mathjax>$0$</mathjax>, and even then <mathjax>$1 &lt; 2 + 0$</mathjax>.</p><div class="coq-box row no-gutters" id="coq-box-4"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
 5
 6
-7</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-5"><span class="show-all show-4"><span class="show-all show-3"><span class="show-all show-2"><span class="show-all show-1"><span></span><span class="kn">Lemma</span> <span class="n">mismatch_proves_anything</span><span class="o">:</span>
-  <span class="k">forall</span> <span class="n">y</span><span class="o">,</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="bp">true</span> <span class="o">=</span> <span class="bp">false</span><span class="o">.</span></span>
+7
+8</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-5"><span class="show-all show-4"><span class="show-all show-3"><span class="show-all show-2"><span class="show-all show-1"><span></span><span class="kn">Lemma</span> <span class="n">mismatch_proves_anything</span><span class="o">:</span>
+  <span class="k">forall</span> <span class="o">(</span><span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">P</span> <span class="o">:</span> <span class="kt">Prop</span><span class="o">),</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">P</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
   <span class="k">intros</span><span class="o">.</span></span>
   <span class="highlight-focus"><span class="kp">discriminate</span><span class="o">.</span></span></span>
   <span class="c">(* Use "H: 1 = 2 + y" *)</span>
+  <span class="c">(* discriminate alone (without intros) also works *)</span>
 <span class="kn">Qed</span><span class="o">.</span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-0"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-1"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">6</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">3</span><span class="o">)</span>
 
   <span class="o">============================</span>
-  <span class="k">forall</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="bp">true</span> <span class="o">=</span> <span class="bp">false</span>
+  <span class="k">forall</span> <span class="o">(</span><span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">P</span> <span class="o">:</span> <span class="kt">Prop</span><span class="o">),</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">P</span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-2"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">6</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">3</span><span class="o">)</span>
 
   <span class="o">============================</span>
-  <span class="k">forall</span> <span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="bp">true</span> <span class="o">=</span> <span class="bp">false</span>
+  <span class="k">forall</span> <span class="o">(</span><span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">)</span> <span class="o">(</span><span class="n">P</span> <span class="o">:</span> <span class="kt">Prop</span><span class="o">),</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">P</span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-3"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
 5
-6</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">8</span><span class="o">)</span>
+6
+7</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">6</span><span class="o">)</span>
 
   <span class="n">y</span> <span class="o">:</span> <span class="kt">nat</span>
+  <span class="n">P</span> <span class="o">:</span> <span class="kt">Prop</span>
   <span class="n">H</span> <span class="o">:</span> <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span>
   <span class="o">============================</span>
-  <span class="bp">true</span> <span class="o">=</span> <span class="bp">false</span>
+  <span class="n">P</span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-4"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-1"><span></span><span class="n">No</span> <span class="n">more</span> <span class="n">subgoals</span><span class="o">.</span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-5"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -213,27 +243,27 @@
 
 
 <span class="n">mismatch_proves_anything</span> <span class="k">is</span> <span class="n">defined</span>
-</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="6" data-refid="4"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><p>The reason that <code>discriminate</code> works in the above example is that <code>1</code> is a shorthand for <code>S <span class="highlight-focus">O</span></code>, and <code>2 + y</code> is a shorthand for <code>S (S O) + y</code> which computes (by definition of <code>+</code>) to <code>S <span class="highlight-focus">(S y)</span></code>, and the highlighted constructors are mismatched.</p><p>The example below fails because there’s no immediate mismatched constructors.</p><div class="coq-box row no-gutters" id="coq-box-1"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="6" data-refid="4"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><p>The reason that <code>discriminate</code> works in the above example is that <code>1</code> is a shorthand for <code>S <span class="highlight-focus">O</span></code>, and <code>2 + y</code> is a shorthand for <code>S (S O) + y</code> which computes (by definition of <code>+</code>) to <code>S <span class="highlight-focus">(S y)</span></code>, and the highlighted constructors are mismatched.</p><p>The example below fails because there’s no immediate mismatched constructors.</p><div class="coq-box row no-gutters" id="coq-box-5"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
 5</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-4"><span class="show-all show-3"><span class="show-all show-2"><span class="show-all show-1"><span></span><span class="kn">Lemma</span> <span class="n">discriminate_does_not_work_here</span><span class="o">:</span>
-  <span class="k">forall</span> <span class="n">x</span><span class="o">,</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="bp">true</span> <span class="o">=</span> <span class="bp">false</span><span class="o">.</span></span>
+  <span class="k">forall</span> <span class="o">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">),</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="bp">true</span> <span class="o">=</span> <span class="bp">false</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
   <span class="k">intros</span><span class="o">.</span></span>
-  <span class="kp">discriminate</span><span class="o">.</span></span>
+  <span class="highlight-focus"><span class="kp">discriminate</span><span class="o">.</span></span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-0"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-1"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">9</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">7</span><span class="o">)</span>
 
   <span class="o">============================</span>
   <span class="k">forall</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="bp">true</span> <span class="o">=</span> <span class="bp">false</span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-2"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
-4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">9</span><span class="o">)</span>
+4</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">7</span><span class="o">)</span>
 
   <span class="o">============================</span>
   <span class="k">forall</span> <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">,</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">-&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-&gt;</span> <span class="bp">true</span> <span class="o">=</span> <span class="bp">false</span>
@@ -243,7 +273,7 @@
 4
 5
 6
-7</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">12</span><span class="o">)</span>
+7</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span><span class="mi">1</span> <span class="n">subgoal</span> <span class="o">(</span><span class="n">ID</span> <span class="mi">10</span><span class="o">)</span>
 
   <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span>
   <span class="n">H</span> <span class="o">:</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span>
@@ -259,7 +289,7 @@
 <span class="o">&gt;</span>   <span class="o">^^^^^^^^^^^^</span>
 <span class="n">Error</span><span class="o">:</span> <span class="kn">Ltac</span> <span class="n">call</span> <span class="n">to</span> <span class="s2">"discriminate"</span> <span class="n">failed</span><span class="o">.</span></span>
        <span class="n">No</span> <span class="n">primitive</span> <span class="n">equality</span> <span class="n">found</span><span class="o">.</span></span>
-</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="5" data-refid="1"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><p>One possible way to prove the above is to rewrite <code>x</code> to <code>3</code> in <code>x = 1</code> so that we have the term <code>3 = 1</code>. After that, <code>discriminate</code> would now work.</p></decoded-root></div>
+</pre></div></td></tr></tbody></table></div></div></div><div class="row coq-buttons"><div class="col text-center" data-size="5" data-refid="5"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><p>One possible way to prove the above is to rewrite <code>x</code> to <code>3</code> in <code>x = 1</code> so that we have the term <code>3 = 1</code>. After that, <code>discriminate</code> would now work.</p></decoded-root></div>
       </div>
       <footer>
         <hr />
