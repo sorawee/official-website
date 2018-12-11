@@ -7202,11 +7202,19 @@ SPAN.highlight-remove {
 
 /* End Section */
 /* Section: Coq */
-h3.coq-tactic, .coq-usage, .coq-use-when, .coq-equivalent, .coq-caveat {
+h3.coq-tactic, .coq-usage, .coq-use-when, .coq-relevant, .coq-caveat, .coq-desc {
   margin: 1em 0; }
+
+.inverted-tactic {
+  display: list-item;
+  list-style-position: inside;
+  margin: 10px; }
 
 h3.coq-tactic {
   margin-top: 5ex; }
+
+#content-title--coq-tactics-index-html h2 {
+  font-size: 2.2rem; }
 
 .coq-box {
   display: flex;
@@ -7215,9 +7223,9 @@ h3.coq-tactic {
 .coq-box .highlight {
   margin-bottom: 0; }
 
-.coq-script {
-  border-right: 1px solid; }
-
+@media (min-width: 768px) {
+  .coq-script {
+    border-right: 1px solid; } }
 .coq-pane, .coq-script {
   flex-grow: 1; }
 
