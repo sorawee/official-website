@@ -54,7 +54,7 @@
       <div id="content-title--coq-tactics-index-html"
            class="row content-type--page">
         <!-- Main column -->
-        <div><decoded-root><h1>Yet Another Coq Tactic Index</h1><h2>Inverted Tactic Index</h2><p>This section is organized according to a combination of proof state and intention rather than tactic names.</p><h3>Solving based on the shape of the goal</h3><div class="inverted-tactic">If you want to <em>solve</em> the goal that is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation... use <a href="#tactic-reflexivity"><code>reflexivity</code></a>.</div><div class="inverted-tactic">If you want to <em>solve</em> or <em>reduce</em> the goal because the goal could be constructed by a <em>constructor</em>... use <a href="#tactic-constructor"><code>constructor</code></a>.</div><h3>Solving by absurdity</h3><div class="inverted-tactic">If you want to <em>solve</em> any goal because the context contains a <em>false equality</em> due to <em>mismatched constructors</em> after some computation... use <a href="#tactic-discriminate"><code>discriminate</code></a>.</div><h3>Uncategorized</h3><p><div class="inverted-tactic">If you want to <em>solve</em> the goal that existed already in the context after some computation... use <a href="#tactic-assumption"><code>assumption</code></a>.</div><div class="inverted-tactic">If you want to <em>solve</em> the goal because the goal is <code>‹term›</code>... use <a href="#tactic-apply"><code>apply</code></a>.</div></p><h2>Tactic Index</h2><p>This section is organized according to tactic names.</p><h3 class="coq-tactic" id="tactic-reflexivity"><code><a href="#tactic-reflexivity">reflexivity</a></code></h3><div class="coq-usage"><b>Usage: </b><code><a href="#tactic-reflexivity">reflexivity</a></code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal that is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation.</div><div class="coq-desc"><b>Additional description: </b>The tactic calls <code>intros</code> automatically before the actual solve.</div><p>In this example we will apply <code><a href="#tactic-reflexivity">reflexivity</a></code> to prove that for every natural number <mathjax>$x$</mathjax>, if <mathjax>$1 = 1$</mathjax> then <mathjax>$(3 + 2) + x = (2 + 3) + x$</mathjax>.</p><div class="coq-buttons row no-gutters"><div class="col text-right" data-size="6" data-refid="1"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><div class="coq-box row no-gutters" id="coq-box-1"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre> 1
+        <div><decoded-root><h1>Yet Another Coq Tactic Index</h1><h2>Inverted Tactic Index</h2><p>This section is organized according to a combination of proof state and intention rather than tactic names.</p><h3>Solving based on the shape of the goal</h3><p><div class="inverted-tactic">If you want to <em>solve</em> the goal that is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation... use <a href="#tactic-reflexivity"><code>reflexivity</code></a>.</div><div class="inverted-tactic">If you want to <em>solve</em> or <em>reduce</em> the goal because the goal could be constructed by a <em>constructor</em>... use <a href="#tactic-constructor"><code>constructor</code></a>.</div></p><h3>Solving by absurdity</h3><p><div class="inverted-tactic">If you want to <em>solve</em> any goal because the context contains a <em>false equality</em> due to <em>mismatched constructors</em> after some computation... use <a href="#tactic-discriminate"><code>discriminate</code></a>.</div></p><h3>Uncategorized</h3><p><div class="inverted-tactic">If you want to <em>solve</em> the goal that existed already in the context after some computation... use <a href="#tactic-assumption"><code>assumption</code></a>.</div><div class="inverted-tactic">If you want to <em>solve</em> the goal because the goal is <code>‹term›</code>... use <a href="#tactic-apply"><code>apply</code></a>.</div></p><h2>Tactic Index</h2><p>This section is organized according to tactic names.</p><h3 class="coq-tactic" id="tactic-reflexivity"><code><a href="#tactic-reflexivity">reflexivity</a></code></h3><div class="coq-usage"><b>Usage: </b><code><a href="#tactic-reflexivity">reflexivity</a></code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal that is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation.</div><div class="coq-desc"><b>Additional description: </b>The tactic calls <code>intros</code> automatically before the actual solve.</div><p>In this example we will apply <code><a href="#tactic-reflexivity">reflexivity</a></code> to prove that for every natural number <mathjax>$x$</mathjax>, if <mathjax>$1 = 1$</mathjax> then <mathjax>$(3 + 2) + x = (2 + 3) + x$</mathjax>.</p><div class="coq-buttons row no-gutters"><div class="col text-right" data-size="6" data-refid="1"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><div class="coq-box row no-gutters" id="coq-box-1"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
  4
@@ -69,7 +69,7 @@
     <span class="o">(</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="o">)</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="o">(</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">)</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
   <span class="k">intros</span><span class="o">.</span></span>
-  <span class="highlight-focus"><span class="kp">reflexivity</span><span class="o">.</span></span></span>
+  <span class="highlight-focus"><span class="kp"><a href="#tactic-reflexivity">reflexivity</a></span><span class="o">.</span></span></span>
   <span class="c">(* reflexivity alone</span>
 <span class="c">     (without intros) also works *)</span>
 <span class="kn">Qed</span><span class="o">.</span></span>
@@ -115,7 +115,7 @@
   <span class="k">forall</span> <span class="o">(</span><span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span><span class="o">),</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
   <span class="k">intros</span><span class="o">.</span></span>
-  <span class="highlight-focus"><span class="kp">reflexivity</span><span class="o">.</span></span></span>
+  <span class="highlight-focus"><span class="kp"><a href="#tactic-reflexivity">reflexivity</a></span><span class="o">.</span></span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-0"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-1"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -146,7 +146,7 @@
 4
 5
 6</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-1"><span></span><span class="n">Toplevel</span> <span class="n">input</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">2</span><span class="o">-</span><span class="mi">13</span><span class="o">:</span>
-<span class="o">&gt;</span>   <span class="kp">reflexivity</span>
+<span class="o">&gt;</span>   <span class="kp"><a href="#tactic-reflexivity">reflexivity</a></span>
 <span class="o">&gt;</span>   <span class="o">^^^^^^^^^^^</span>
 <span class="n">Error</span><span class="o">:</span> <span class="n">In</span> <span class="n">environment</span>
 <span class="n">x</span> <span class="o">:</span> <span class="kt">nat</span>
@@ -165,7 +165,7 @@
     <span class="n">x</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">y</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
   <span class="k">intros</span><span class="o">.</span></span>
-  <span class="highlight-focus"><span class="kp">assumption</span><span class="o">.</span></span></span>
+  <span class="highlight-focus"><span class="kp"><a href="#tactic-assumption">assumption</a></span><span class="o">.</span></span></span>
   <span class="c">(* Use "H: x = 1 + 2 + y" *)</span>
 <span class="kn">Qed</span><span class="o">.</span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-0"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span>
@@ -216,7 +216,7 @@
     <span class="mi">1</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">y</span> <span class="o">-&gt;</span> <span class="n">P</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
   <span class="k">intros</span><span class="o">.</span></span>
-  <span class="highlight-focus"><span class="kp">discriminate</span><span class="o">.</span></span></span>
+  <span class="highlight-focus"><span class="kp"><a href="#tactic-discriminate">discriminate</a></span><span class="o">.</span></span></span>
   <span class="c">(* Use "H: 1 = 2 + y" *)</span>
   <span class="c">(* discriminate alone</span>
 <span class="c">     (without intros) also works *)</span>
@@ -271,7 +271,7 @@
     <span class="bp">true</span> <span class="o">=</span> <span class="bp">false</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
   <span class="k">intros</span><span class="o">.</span></span>
-  <span class="highlight-focus"><span class="kp">discriminate</span><span class="o">.</span></span></span>
+  <span class="highlight-focus"><span class="kp"><a href="#tactic-discriminate">discriminate</a></span><span class="o">.</span></span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-0"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-1"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
@@ -305,7 +305,7 @@
 3
 4
 5</pre></div></td><td class="code"><div class="source"><pre class=" other "><span class="show-all show-2"><span class="show-all show-1"><span></span><span class="n">Toplevel</span> <span class="n">input</span><span class="o">,</span> <span class="n">characters</span> <span class="mi">2</span><span class="o">-</span><span class="mi">14</span><span class="o">:</span>
-<span class="o">&gt;</span>   <span class="kp">discriminate</span>
+<span class="o">&gt;</span>   <span class="kp"><a href="#tactic-discriminate">discriminate</a></span>
 <span class="o">&gt;</span>   <span class="o">^^^^^^^^^^^^</span>
 <span class="n">Error</span><span class="o">:</span> <span class="kn">Ltac</span> <span class="n">call</span> <span class="n">to</span> <span class="s2">"discriminate"</span> <span class="n">failed</span><span class="o">.</span></span>
        <span class="n">No</span> <span class="n">primitive</span> <span class="n">equality</span> <span class="n">found</span><span class="o">.</span></span>
@@ -333,9 +333,9 @@
 
 <span class="kn">Lemma</span> <span class="n">four_is_even</span> <span class="o">:</span> <span class="n">even</span> <span class="mi">4</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
-  <span class="highlight-focus"><span class="k">constructor</span><span class="o">.</span></span></span>
-  <span class="highlight-focus"><span class="k">constructor</span><span class="o">.</span></span></span>
-  <span class="highlight-focus"><span class="k">constructor</span><span class="o">.</span></span></span>
+  <span class="highlight-focus"><span class="k"><a href="#tactic-constructor">constructor</a></span><span class="o">.</span></span></span>
+  <span class="highlight-focus"><span class="k"><a href="#tactic-constructor">constructor</a></span><span class="o">.</span></span></span>
+  <span class="highlight-focus"><span class="k"><a href="#tactic-constructor">constructor</a></span><span class="o">.</span></span></span>
 <span class="kn">Qed</span><span class="o">.</span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-0"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1</pre></div></td><td class="code"><div class="source"><pre class=" other "><span></span>
 </pre></div></td></tr></tbody></table></div></div><div class="coq-pane col-md-6 show-all show-1"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
@@ -377,7 +377,7 @@
 
 
 <span class="n">four_is_even</span> <span class="k">is</span> <span class="n">defined</span>
-</pre></div></td></tr></tbody></table></div></div></div><p>When the goal is <code>even 4</code>, the first <code><a href="#tactic-constructor">constructor</a></code> finds that the goal can be constructed by using <code>even_SS</code>. However, it cannot solve the goal because <code>even_SS</code> requires a proof of <code>even n</code> (which is <code>even 2</code> in this case) to construct a proof of <code>even (2 + n)</code> (which is <code>even 4</code> in this case). This application of <code><a href="#tactic-constructor">constructor</a></code> thus can only reduce the goal to <code>even 2</code>.</p><p>Similarly, when the goal is <code>even 2</code>, the second <code><a href="#tactic-constructor">constructor</a></code> finds that the goal can be constructed by using <code>even_SS</code> and reduces the goal to <code>even 0</code>.</p><p>When the goal is <code>even 0</code>, the last <code><a href="#tactic-constructor">constructor</a></code> finds that the goal can be constructed by using <code>even_O</code>. As <code>even_O</code> doesn’t require anything to construct <code>even 0</code>, so the last <code><a href="#tactic-constructor">constructor</a></code> solves the goal.</p><div class="coq-caveat"><b>Caveat: </b>When there are multiple constructors that can be used to constructed the goal, <code><a href="#tactic-constructor">constructor</a></code> will use the first one, which might not be the one that you want. In that event, the goal might be reduced to a proof state that can’t be proven, as we can see below.</div><div class="coq-buttons row no-gutters"><div class="col text-right" data-size="5" data-refid="7"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><div class="coq-box row no-gutters" id="coq-box-7"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre> 1
+</pre></div></td></tr></tbody></table></div></div></div><p>When the goal is <code>even 4</code>, the first <code><a href="#tactic-constructor">constructor</a></code> finds that the goal can be constructed by using <code>even_SS</code>. However, it cannot solve the goal because <code>even_SS</code> requires a proof of <code>even n</code> (which is <code>even 2</code> in this case) to construct a proof of <code>even (2 + n)</code> (which is <code>even 4</code> in this case). This <code><a href="#tactic-constructor">constructor</a></code> thus can only reduce the goal to <code>even 2</code>.</p><p>Similarly, when the goal is <code>even 2</code>, the second <code><a href="#tactic-constructor">constructor</a></code> finds that the goal can be constructed by using <code>even_SS</code> and reduces the goal to <code>even 0</code>.</p><p>When the goal is <code>even 0</code>, the last <code><a href="#tactic-constructor">constructor</a></code> finds that the goal can be constructed by using <code>even_O</code>. As <code>even_O</code> doesn’t require anything to construct <code>even 0</code>, the last <code><a href="#tactic-constructor">constructor</a></code> solves the goal.</p><div class="coq-caveat"><b>Caveat: </b>When there are multiple constructors that can be used to constructed the goal, <code><a href="#tactic-constructor">constructor</a></code> will use the first one, which might not be the one that you want. In that event, the goal might be reduced to a proof state that can’t be proven, as we can see below.</div><div class="coq-buttons row no-gutters"><div class="col text-right" data-size="5" data-refid="7"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><div class="coq-box row no-gutters" id="coq-box-7"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
  4
@@ -392,7 +392,7 @@
 
 <span class="kn">Lemma</span> <span class="n">foo_is_constructible</span> <span class="o">:</span> <span class="n">foo</span><span class="o">.</span></span>
 <span class="kn">Proof</span><span class="o">.</span></span>
-  <span class="highlight-focus"><span class="k">constructor</span><span class="o">.</span></span></span>
+  <span class="highlight-focus"><span class="k"><a href="#tactic-constructor">constructor</a></span><span class="o">.</span></span></span>
   <span class="c">(* Use FooA instead of FooB *)</span>
   <span class="c">(* We get stuck.</span>
 <span class="c">     There&#39;s no way to prove False! *)</span>
