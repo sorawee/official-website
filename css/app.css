@@ -6947,13 +6947,13 @@ article.post-summary {
 body {
   counter-reset: margin-note-counter; }
 
-.margin-note-number:after, .margin-note:before {
+.margin-note-number:after, .margin-note-box:before {
   top: -0.5rem;
   font-size: 0.8rem;
   position: relative;
   vertical-align: baseline; }
 
-.margin-note:before {
+.margin-note-box:before {
   content: counter(margin-note-counter) " "; }
 
 .margin-note-number:after {
@@ -6978,7 +6978,7 @@ label.margin-note-toggle:not(.margin-note-number) {
 
   .margin-note-toggle:checked + .margin-note {
     display: block;
-    margin: 1rem; } }
+    margin: 3ex 1rem; } }
 @media (min-width: 768px) {
   .margin-note {
     float: right;
@@ -7000,6 +7000,10 @@ label.margin-note-toggle:not(.margin-note-number) {
   .margin-note {
     margin-right: -285px;
     width: 285px; } }
+.margin-note-box {
+  padding: 0.5rem;
+  background-color: beige; }
+
 /* End Section */
 /* Add line separator between linenos and code */
 table.sourcetable td.linenos {

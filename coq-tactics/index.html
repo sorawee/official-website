@@ -1,60 +1,5 @@
-
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Yet Another Coq Tactic Index</title>
-    <meta name="author"      content="Sorawee Porncharoenwase">
-    <meta name="keywords"    content="<!-- TODO -->">
-    <meta name="viewport"    content="width=device-width, initial-scale=1.0">
-    <link rel="icon"      href="https://homes.cs.washington.edu/~sorawee/favicon.ico">
-    <link rel="canonical" href="<!-- TODO -->">
-
-    <!-- TODO -->
-
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://code.cdn.mozilla.net/fonts/fira.css">
-    <link rel="stylesheet" href="https://afeld.github.io/emoji-css/emoji.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="https://homes.cs.washington.edu/~sorawee/css/app.css">
-    <link rel="stylesheet" type="text/css" href="https://homes.cs.washington.edu/~sorawee/css/pygments.css">
-    <link rel="stylesheet" type="text/css" href="https://homes.cs.washington.edu/~sorawee/css/scribble.css">
-
-    <!-- TODO: Feeds -->
-
-    <!-- TODO: Google Analytics -->
-  </head>
-  <body>
-
-    <!-- A standard Twitter Bootstrap nav bar -->
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-      <div class="container">
-        <div class="navbar-brand site-info">
-          <h1>
-            <a href="https://homes.cs.washington.edu/~sorawee/index.html">Sorawee Porncharoenwase</a>
-          </h1>
-          <p>PhD Student at UW CSE</p>
-        </div>
-
-        <button class="navbar-toggler navbar-toggler-right"
-                type="button" data-toggle="collapse"
-                data-target="#navbar_collapse" aria-controls="navbar_collapse"
-                aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbar_collapse">
-          <ul class="navbar-nav ml-auto"><li class="nav-item "><a class="nav-link" href="https://homes.cs.washington.edu/~sorawee/index.html">Home</a></li><li class="nav-item "><a class="nav-link" href="https://homes.cs.washington.edu/~sorawee/blog">Blog</a></li><li class="nav-item"><a class="nav-link" title="sorawee@cs.washington.edu" href="mailto:sorawee@cs.washington.edu" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-envelope"></i></a></li><li class="nav-item"><a class="nav-link" title="CSE 394" href="https://norfolk.cs.washington.edu/directory/index.php?prev_floor=3&amp;show_room=CSE394" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-map-marker-alt"></i></a></li><li class="nav-item"><a class="nav-link" title="@sorawee" href="https://www.github.com/sorawee" data-toggle="tooltip" data-placement="bottom"><i class="fab fa-github"></i></a></li><li class="nav-item"><a class="nav-link" title="Pollen source" href="https://github.com/sorawee/my-website/blob/master/coq-tactics/index.poly.pm" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-code"></i></a></li></ul>
-        </div>
-      </div>
-    </nav>
-
-    <main class="container">
-      <div id="content-title--coq-tactics-index-html"
-           class="row content-type--page">
-        <!-- Main column -->
-        <div><decoded-root><h1>Yet Another Coq Tactic Index</h1><h2>Inverted Tactic Index</h2><p>This section is organized according to a combination of proof state and intention rather than tactic names.</p><h3>Solving based on the shape of the goal</h3><p><div class="inverted-tactic">If you want to <em>solve</em> the goal that is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation... use <a href="#tactic-reflexivity"><code>reflexivity</code></a>.</div><div class="inverted-tactic">If you want to <em>solve</em> or <em>reduce</em> the goal because the goal could be constructed by a <em>constructor</em>... use <a href="#tactic-constructor"><code>constructor</code></a>.</div></p><h3>Solving by absurdity</h3><p><div class="inverted-tactic">If you want to <em>solve</em> any goal because the context contains a <em>false equality</em> due to <em>mismatched constructors</em> after some computation... use <a href="#tactic-discriminate"><code>discriminate</code></a>.</div></p><h3>Uncategorized</h3><p><div class="inverted-tactic">If you want to <em>solve</em> the goal that existed already in the context after some computation... use <a href="#tactic-assumption"><code>assumption</code></a>.</div><div class="inverted-tactic">If you want to <em>solve</em> the goal because the goal is <code>‹term›</code>... use <a href="#tactic-apply"><code>apply</code></a>.</div></p><h2>Tactic Index</h2><p>This section is organized according to tactic names.</p><h3 class="coq-tactic" id="tactic-reflexivity"><code><a href="#tactic-reflexivity">reflexivity</a></code></h3><div class="coq-usage"><b>Usage: </b><code><a href="#tactic-reflexivity">reflexivity</a></code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal that is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation.</div><div class="coq-desc"><b>Additional description: </b>The tactic calls <code>intros</code> automatically before the actual solve.</div><p>In this example we will apply <code><a href="#tactic-reflexivity">reflexivity</a></code> to prove that for every natural number <mathjax>$x$</mathjax>, if <mathjax>$1 = 1$</mathjax> then <mathjax>$(3 + 2) + x = (2 + 3) + x$</mathjax>.</p><div class="coq-buttons row no-gutters"><div class="col text-right" data-size="6" data-refid="1"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><div class="coq-box row no-gutters" id="coq-box-1"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre> 1
+<html lang="en"><head><meta charset="utf-8"/><title>Yet Another Coq Tactic Index</title><meta name="author" content="Sorawee Porncharoenwase"/><meta name="keywords" content=""/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="icon" href="https://homes.cs.washington.edu/~sorawee/favicon.ico"/><link rel="canonical" href=""/><link rel="stylesheet" type="text/css" href="https://code.cdn.mozilla.net/fonts/fira.css"/><link rel="stylesheet" type="text/css" href="https://afeld.github.io/emoji-css/emoji.css"/><link rel="stylesheet" type="text/css" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"/><link rel="stylesheet" type="text/css" href="https://homes.cs.washington.edu/~sorawee/css/app.css"/><link rel="stylesheet" type="text/css" href="https://homes.cs.washington.edu/~sorawee/css/pygments.css"/><link rel="stylesheet" type="text/css" href="https://homes.cs.washington.edu/~sorawee/css/scribble.css"/><link rel="alternate" type="application/atom+xml" href="https://homes.cs.washington.edu/~sorawee/feed.xml"/></head><body><nav class="navbar navbar-expand-md navbar-light bg-light"><div class="container"><div class="navbar-brand site-info"><h1><a href="https://homes.cs.washington.edu/~sorawee/index.html">Sorawee Porncharoenwase</a></h1><p>PhD Student at UW CSE</p></div><button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar_collapse" aria-controls="navbar_collapse" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbar_collapse"><ul class="navbar-nav ml-auto"><li class="nav-item "><a class="nav-link" href="https://homes.cs.washington.edu/~sorawee/index.html">Home</a></li><li class="nav-item "><a class="nav-link" href="https://homes.cs.washington.edu/~sorawee/blog">Blog</a></li><li class="nav-item "><a class="nav-link" href="https://homes.cs.washington.edu/~sorawee/coq-tactics">Coq&#160;Tactics<sup>&lt;α</sup></a></li><li class="nav-item"><a class="nav-link" title="sorawee@cs.washington.edu" href="mailto:sorawee@cs.washington.edu" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-envelope"></i></a></li><li class="nav-item"><a class="nav-link" title="CSE 394" href="https://norfolk.cs.washington.edu/directory/index.php?prev_floor=3&amp;show_room=CSE394" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-map-marker-alt"></i></a></li><li class="nav-item"><a class="nav-link" title="@sorawee" href="https://www.github.com/sorawee" data-toggle="tooltip" data-placement="bottom"><i class="fab fa-github"></i></a></li><li class="nav-item"><a class="nav-link" title="Pollen source" href="https://github.com/sorawee/my-website/blob/master/coq-tactics/index.poly.pm" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-code"></i></a></li></ul></div></div></nav><main class="container"><div id="content-title--coq-tactics-index-html" class="row content-type--page"><div><h1>Yet Another Coq Tactic Index (Pre-Alpha)</h1><h2>Inverted Tactic Index</h2><p>This section is organized according to a combination of proof state and intention rather than tactic names.</p><h3>Solving based on the shape of the goal</h3><div class="inverted-tactic">If you want to <em>solve</em> the goal that is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation... use <a href="#tactic-reflexivity"><code>reflexivity</code></a>.</div><div class="inverted-tactic">If you want to <em>solve</em> or <em>reduce</em> the goal because the goal could be constructed by a <em>constructor</em>... use <a href="#tactic-constructor"><code>constructor</code></a>.</div><h3>Solving by absurdity</h3><div class="inverted-tactic">If you want to <em>solve</em> any goal because the context contains a <em>false equality</em> due to <em>mismatched constructors</em> after some computation... use <a href="#tactic-discriminate"><code>discriminate</code></a>.</div><h3>Uncategorized</h3><p><lookup-tac>assumptiondefault</lookup-tac><lookup-tac>applydefault</lookup-tac></p><h2>Tactic Index</h2><p>This section is organized according to tactic names.</p><h3 class="coq-tactic" id="tactic-reflexivity"><code><a href="#tactic-reflexivity">reflexivity</a></code></h3><div class="coq-usage"><b>Usage: </b><code><a href="#tactic-reflexivity">reflexivity</a></code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal that is a <em>true equality</em>. I.e., the goal has the form <code>‹t› = ‹u›</code> and both <code>‹t›</code> and <code>‹u›</code> are equal syntactically after some computation.</div><div class="coq-desc"><b>Additional description: </b>The tactic calls <code>intros</code> automatically before the actual solve.</div><p>In this example we will apply <code><a href="#tactic-reflexivity">reflexivity</a></code> to prove that for every natural number <mathjax>$x$</mathjax>, if <mathjax>$1 = 1$</mathjax> then <mathjax>$(3 + 2) + x = (2 + 3) + x$</mathjax>.</p><div class="coq-buttons row no-gutters"><div class="col text-right" data-size="6" data-refid="1"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><div class="coq-box row no-gutters" id="coq-box-1"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre> 1
  2
  3
  4
@@ -257,7 +202,7 @@
 
 
 <span class="n">mismatch_proves_anything</span> <span class="k">is</span> <span class="n">defined</span>
-</pre></div></td></tr></tbody></table></div></div></div><p>The reason that <code><a href="#tactic-discriminate">discriminate</a></code> works in the above example is that <code>1</code> is a shorthand for <code>S <span class="highlight-focus">O</span></code>, and <code>2 + y</code> is a shorthand for <code>S (S O) + y</code> which computes (by definition of <code>+</code>) to <code>S <span class="highlight-focus">(S y)</span></code>, and the highlighted constructors are mismatched.</p><p>The example below fails because there’s no immediate mismatched constructors.</p><div class="coq-buttons row no-gutters"><div class="col text-right" data-size="5" data-refid="5"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><div class="coq-box row no-gutters" id="coq-box-5"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
+</pre></div></td></tr></tbody></table></div></div></div><p>The reason that <code><a href="#tactic-discriminate">discriminate</a></code> works in the above example is that <code>1</code> is a shorthand for <code>S <mark class="highlight-focus"></mark></code>, and <code>2 + y</code> is a shorthand for <code>S (S O) + y</code> which computes (by definition of <code>+</code>) to <code>S <mark class="highlight-focus"></mark></code>, and the highlighted constructors are mismatched.</p><p>The example below fails because there’s no immediate mismatched constructors.</p><div class="coq-buttons row no-gutters"><div class="col text-right" data-size="5" data-refid="5"><button class="prev-button mr-1">Previous</button><button class="next-button ml-1">Next</button></div></div><div class="coq-box row no-gutters" id="coq-box-5"><div class="coq-script col-md-6"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre>1
 2
 3
 4
@@ -421,28 +366,4 @@
 
   <span class="o">============================</span>
   <span class="n">False</span>
-</pre></div></td></tr></tbody></table></div></div></div><p>The above lemma can be proven by specifying which constructor should be used manually. E.g., by using <code>exact FooB</code>, <code><a href="#tactic-apply">apply</a> FooB</code>, etc.</p><div class="coq-relevant"><p><b>Relevant tactics: </b></p><ul><li>Equivalent to <code><a href="#tactic-apply">apply</a> ‹c›.</code> where the goal can be constructed by the constructor <code>‹c›</code>.</li><li>Equivalent to <code>exact ‹c›.</code> if <code><a href="#tactic-constructor">constructor</a>.</code> solves the goal.</li></ul></div><h3 class="coq-tactic" id="tactic-apply"><code><a href="#tactic-apply">apply</a></code></h3><div class="coq-usage"><b>Usage: </b><code><a href="#tactic-apply">apply</a> ‹term›</code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal because the goal is <code>‹term›</code>.</div><h2>Acknowledgements</h2><p>I would like to thank Joe Redmon, whose <a href="https://pjreddie.com/coq-tactics/">Coq Tactics Index</a> is the template for this tactic index.</p></decoded-root></div>
-      </div>
-      <footer>
-        <hr />
-        <div class="float-md-left">
-          Site generated by <a href="http://pollenpub.com">
-            Pollen
-          </a>/<a href="https://racket-lang.org">
-            Racket
-          </a>
-        </div>
-        <div class="float-md-right">
-          © Sorawee Porncharoenwase
-        </div>
-      </footer>
-    </main>
-    <!-- JS -->
-    <script type="text/javascript" src="https://homes.cs.washington.edu/~sorawee/js/jquery-3.2.1.slim.min.js"></script>
-    <script type="text/javascript" src="https://homes.cs.washington.edu/~sorawee/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-    </script>
-    <script type="text/javascript" src="https://homes.cs.washington.edu/~sorawee/js/script.js"></script>
-  </body>
-</html>
+</pre></div></td></tr></tbody></table></div></div></div><p>The above lemma can be proven by specifying which constructor should be used manually. E.g., by using <code>exact FooB</code>, <code><a href="#tactic-apply">apply</a> FooB</code>, etc.</p><div class="coq-relevant"><p><b>Relevant tactics: </b></p><ul><li>Equivalent to <code><a href="#tactic-apply">apply</a> ‹c›.</code> where the goal can be constructed by the constructor <code>‹c›</code>.</li><li>Equivalent to <code>exact ‹c›.</code> if <code><a href="#tactic-constructor">constructor</a>.</code> solves the goal.</li></ul></div><h3 class="coq-tactic" id="tactic-apply"><code><a href="#tactic-apply">apply</a></code></h3><div class="coq-usage"><b>Usage: </b><code><a href="#tactic-apply">apply</a> ‹term›</code></div><div class="coq-use-when"><b>Use it when: </b>you want to <em>solve</em> the goal because the goal is <code>‹term›</code>.</div><h2>Why not jsCoq?</h2><p><a href="https://github.com/ejgallego/jscoq">jsCoq</a> is great! However, it’s unsuitable to this project for several reasons:</p><ul><li>It’s too slow to load.</li><li>It can’t step through several scripts independently.</li><li>The sidebar is too obtrusive and not really configurable.</li></ul><h2>Acknowledgements</h2><p>I would like to thank Joe Redmon, whose <a href="https://pjreddie.com/coq-tactics/">Coq Tactics Index</a> is the template for this tactic index.</p></div></div><footer><hr/><div class="float-md-left">Site generated by <a href="http://pollenpub.com">Pollen</a>/<a href="https://racket-lang.org">Racket</a></div><div class="float-md-right">© Sorawee Porncharoenwase</div></footer></main><script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><script type="text/javascript" src="https://homes.cs.washington.edu/~sorawee/js/bootstrap.bundle.min.js"></script><script type="text/javascript" src="https://homes.cs.washington.edu/~sorawee/js/script.js"></script></body></html>
