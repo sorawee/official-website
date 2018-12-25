@@ -24,8 +24,20 @@
 <p><span class="pubdate">Published on Thursday, October 5th, 2017</span> :: <span><a href="https://homes.cs.washington.edu/~sorawee/en/tags/programming-languages">programming-languages</a>, <a href="https://homes.cs.washington.edu/~sorawee/en/tags/y-combinator">y-combinator</a></span></p>
 <p class="update"><span class="pubdate">Updated on Sunday, December 9th, 2018</span></p>
 <div class="post-content">
-<h2></h2>
-<h2></h2>
+<p>The Y combinator is a somewhat magical aspect of the untyped <a href="https://en.wikipedia.org/wiki/Lambda_calculus">lambda calculus</a>. Many people presented explanations of this magic, but I found them somewhat unsatisfactory. Some explanations show the combinator in the beginning and then simply demonstrate that the given combinator is correct. Some other explanations contain lines like “Why don’t we try passing it to itself? And look, this turns out to be exactly what we want!” These explanations don’t give an intuition for how one could <em>constructively</em> obtain the combinator. <i>What on earth makes you think that passing it to itself is a good idea?</i> As such, this post, intended for those who know the Y combinator already but do not satisfy with the existing explanations, attempts to explain how one could constructively derive the Y combinator.</p>
+<h2>Introduction</h2>
+<p>In lambda calculus, there’s no primitive support to define recursive functions. <i>Can we define recursive functions in lambda calculus regardless? And how?</i></p>
+<p>While our question focuses on lambda calculus, to make it easier to follow, we will use an actual programming language. Here, I choose to use <a href="http://racket-lang.org">Racket</a><label for="margin-note-1" class="margin-note-toggle margin-note-number"></label><input type="checkbox" id="margin-note-1" class="margin-note-toggle"/><object class="margin-note"><div class="margin-note-box" decode="exclude-paragraph">The choice of Racket is that: 
+<ul>
+<li>It is not statically typed, so we can write the combinator which would have been prohibited had we use a language with a standard type system like <a href="https://en.wikipedia.org/wiki/Hindley%E2%80%93Milner_type_system">Hindley–Milner</a>.</li>
+<li>Its scoping rule is simple and close to lambda calculus. Unlike, say, JavaScript and Python, there’s no variable hoisting, so we won’t encounter a problem where a simple, innocent code <code>const f = () =&gt; f();</code> unintentionally allows recursion.</li>
+</ul>
+</div>
+</object>, but other programming languages might work as well.</p>
+<p>As mentioned above, this post is intended for those who know basic programming language theory. However, I will try to provide links as many as possible to accommodate non-target audience.</p>
+<h2>Enabling recursion</h2>
+<p>In Racket, we can write code to compute $3! + 4!$ easily<label for="margin-note-2" class="margin-note-toggle margin-note-number"></label><input type="checkbox" id="margin-note-2" class="margin-note-toggle"/><object class="margin-note"><div class="margin-note-box" decode="exclude-paragraph">This post will mostly use <code>#lang racket</code>, so I will elide <a href="https://docs.racket-lang.org/guide/more-hash-lang.html">the hash lang line</a> from now on unless I want to highlight it.</div>
+</object>.</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
 <pre>1
 2
@@ -52,6 +64,32 @@
 </div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#output-id-1"><i class="far fa-copy"></i></button></div>
 </div>
+<p>Defining this recursive <code>fact</code> function is possible because <a href="https://docs.racket-lang.org/guide/let.html#%28part._.Recursive_.Binding__letrec%29"><code>letrec</code></a><label for="margin-note-3" class="margin-note-toggle margin-note-number"></label><input type="checkbox" id="margin-note-3" class="margin-note-toggle"/><object class="margin-note"><div class="margin-note-box" decode="exclude-paragraph">Read <code>(letrec ([‹x› ‹v›]) ‹e›)</code> as “let <code>‹x›</code> be a recursive function <code>‹v›</code> and then return <code>‹e›</code>”</div>
+</object> allows us to refer to <code>fact</code> inside the lambda function that <em>will</em> be <code>fact</code> itself.</p>
+<p>Of course, lambda calculus has no <code>letrec</code>. We might ask how Racket implements <code>letrec</code>, and the short answer is that it does so by using mutation<label for="margin-note-4" class="margin-note-toggle margin-note-number"></label><input type="checkbox" id="margin-note-4" class="margin-note-toggle"/><object class="margin-note"><div class="margin-note-box" decode="exclude-paragraph">For instance: <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
+<pre>1
+2
+3
+4
+5
+6
+7</pre>
+</div>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-2"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="s2">"dummy-value"</span><span class="p">]</span></span><span class="p">)</span></span>
+  <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/begin.html#(form._((quote._~23~25kernel)._begin))">begin</a></span>
+    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/set_.html#(form._((quote._~23~25kernel)._set!))">set!</a></span> <span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
+                 <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
+                   <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
+                   <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
+    <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="mi">3</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="mi">4</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span></pre>
+</div>
+</td></tr></tbody></table>
+</div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-2"><i class="far fa-copy"></i></button></div>
+</div>
+</div>
+</object>, which lambda calculus doesn’t have either. To simulate lambda calculus, we will write the factorial function in Racket without using <code>letrec</code> and mutation.</p>
+<p>Here’s our first straightforward attempt:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
 <pre>1
 2
@@ -59,7 +97,7 @@
 4
 5</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-2"><span></span><span class="paren"><span class="p">(</span><mark class="highlight-add"><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span></mark> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-3"><span></span><span class="paren"><span class="p">(</span><mark class="highlight-add"><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span></mark> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
               <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
                 <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
                 <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><mark class="highlight-focus"><span class="n">fact</span></mark> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
@@ -68,43 +106,47 @@
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-2"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-3"><i class="far fa-copy"></i></button></div>
 </div>
 <div class="highlight-container"><div class="highlight"><pre id="output-id-2"><span class="text-type-error">fact: unbound identifier in: fact</span></pre>
 </div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#output-id-2"><i class="far fa-copy"></i></button></div>
 </div>
+<p>We simply change <code>letrec</code> to <a href="https://docs.racket-lang.org/guide/let.html#%28part._.Parallel_.Binding__let%29"><code>let</code></a><label for="margin-note-5" class="margin-note-toggle margin-note-number"></label><input type="checkbox" id="margin-note-5" class="margin-note-toggle"/><object class="margin-note"><div class="margin-note-box" decode="exclude-paragraph">Read <code>(let ([‹x› ‹v›]) ‹e›)</code> as “let <code>‹x›</code> be <code>‹v›</code> and then return <code>‹e›</code>”</div>
+</object>. While <code>let</code> and <code>letrec</code> are very similar, <code>let</code> doesn’t have the ability that allows us to refer to <code>fact</code> inside that lambda function. In fact, <code>(let ([‹x› ‹v›]) ‹e›)</code> doesn’t add any expressive power to lambda calculus at all because its semantics is completely equivalent to <code>((λ (‹x›) ‹e›) ‹v›)</code>, a lambda term. Some programming languages simply treats <code>let</code> as a <a href="https://en.wikipedia.org/wiki/Syntactic_sugar">syntactic sugar</a>, and desugar <code>(let ([‹x› ‹v›]) ‹e›)</code> to <code>((λ (‹x›) ‹e›) ‹v›)</code>.</p>
+<p>As expected, our straightforward attempt doesn’t work because the highlighted <code>fact</code> is unbound. How can we fix it? Let’s take a look at another example:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
 <pre>1
 2
 3</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-3"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="n">n</span> <mark class="highlight-focus"><span class="n">c</span></mark><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-4"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="n">n</span> <mark class="highlight-focus"><span class="n">c</span></mark><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">c</span> <span class="mi">1</span><span class="p">]</span></span><span class="p">)</span></span>
     <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="mi">99</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
 </pre>
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-3"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-4"><i class="far fa-copy"></i></button></div>
 </div>
 <div class="highlight-container"><div class="highlight"><pre id="output-id-3"><span class="text-type-error">c: unbound identifier in: c</span></pre>
 </div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#output-id-3"><i class="far fa-copy"></i></button></div>
 </div>
+<p>The above code has a similar problem. the highlighted <code>c</code> is unbound. One way to fix the problem is to explicitly pass <code>c</code> to the lambda function, so that the highlighted <code>c</code> becomes bound:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
 <pre>1
 2
 3</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-4"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><mark class="highlight-add"><span class="n">c</span></mark> <span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="n">n</span> <span class="n">c</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-5"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><mark class="highlight-add"><span class="n">c</span></mark> <span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="n">n</span> <span class="n">c</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">c</span> <span class="mi">1</span><span class="p">]</span></span><span class="p">)</span></span>
     <span class="paren"><span class="p">(</span><span class="n">f</span> <mark class="highlight-add"><span class="n">c</span></mark> <span class="mi">99</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
 </pre>
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-4"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-5"><i class="far fa-copy"></i></button></div>
 </div>
 <div class="highlight-container"><div class="highlight"><pre id="output-id-4">100</pre>
 </div>
@@ -118,7 +160,7 @@
 4
 5</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-5"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><mark class="highlight-add"><span class="n">fact</span></mark> <span class="n">n</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-6"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><mark class="highlight-add"><span class="n">fact</span></mark> <span class="n">n</span><span class="p">)</span></span>
               <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
                 <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
                 <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span></mark><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
@@ -127,7 +169,7 @@
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-5"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-6"><i class="far fa-copy"></i></button></div>
 </div>
 <div class="highlight-container"><div class="highlight"><pre id="output-id-5"><span class="text-type-error">fact: arity mismatch;
 the expected number of arguments does not match the given number
@@ -145,7 +187,7 @@ the expected number of arguments does not match the given number
 4
 5</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-6"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">n</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-7"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">n</span><span class="p">)</span></span>
               <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
                 <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
                 <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <mark class="highlight-add"><span class="n">fact</span></mark> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
@@ -154,7 +196,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-6"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-7"><i class="far fa-copy"></i></button></div>
 </div>
 <div class="highlight-container"><div class="highlight"><pre id="output-id-6">30</pre>
 </div>
@@ -174,37 +216,37 @@ the expected number of arguments does not match the given number
 <pre>1
 2</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-7"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._letrec))">letrec</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">diverge</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-8"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._letrec))">letrec</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">diverge</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span>
-</pre>
-</div>
-</td></tr></tbody></table>
-</div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-7"><i class="far fa-copy"></i></button></div>
-</div>
-<p>is transformed to:</p>
-<div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
-<pre>1
-2</pre>
-</div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-8"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">diverge</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span> <span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
-  <span class="paren"><span class="p">(</span><span class="n">diverge</span> <span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span>
 </pre>
 </div>
 </td></tr></tbody></table>
 </div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-8"><i class="far fa-copy"></i></button></div>
 </div>
-<p>To obtain a lambda term, we simply desugar <code>let</code> as described above:</p>
+<p>is transformed to:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
-<pre>1</pre>
+<pre>1
+2</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-9"><span></span><span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span> <span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span> <span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-9"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">diverge</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span> <span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
+  <span class="paren"><span class="p">(</span><span class="n">diverge</span> <span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span>
 </pre>
 </div>
 </td></tr></tbody></table>
 </div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-9"><i class="far fa-copy"></i></button></div>
+</div>
+<p>To obtain a lambda term, we simply desugar <code>let</code> as described above:</p>
+<div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
+<pre>1</pre>
+</div>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-10"><span></span><span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span> <span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">diverge</span> <span class="n">diverge</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
+</pre>
+</div>
+</td></tr></tbody></table>
+</div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-10"><i class="far fa-copy"></i></button></div>
 </div>
 <p>Recall that this is known as the $\Omega$-combinator, a classic example of a lambda term whose evaluation doesn’t terminate.</p>
 <h2>Deriving a fake Y combinator</h2>
@@ -216,7 +258,7 @@ the expected number of arguments does not match the given number
 4
 5</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-10"><span></span><span class="paren"><span class="p">(</span><span class="n">‹make-recursion›</span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-11"><span></span><span class="paren"><span class="p">(</span><span class="n">‹make-recursion›</span>
   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
     <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
       <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
@@ -225,7 +267,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-10"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-11"><i class="far fa-copy"></i></button></div>
 </div>
 <p>produces the actual factorial function. However, this clearly won’t work, because the highlighted identifiers are going to be unbound. To fix this, we simply make it bound by wrapping a lambda function around the body.</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -236,7 +278,7 @@ the expected number of arguments does not match the given number
 5
 6</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-11"><span></span><span class="paren"><span class="p">(</span><span class="n">‹make-recursion›</span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-12"><span></span><span class="paren"><span class="p">(</span><span class="n">‹make-recursion›</span>
   <span class="paren"><span class="p">(</span><mark class="highlight-add"><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span></mark>
     <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
       <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
@@ -246,7 +288,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-11"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-12"><i class="far fa-copy"></i></button></div>
 </div>
 <p>We will call the lambda function that is the argument of <code>‹make-recursion›</code> a <em>recursion maker</em>. What we want then is to find <code>‹make-recursion›</code> so that for any <code>‹recursion-maker›</code>, <code>(‹make-recursion› ‹recursion-maker›)</code> produces the actual recursive function.</p>
 <p>How should we approach this? We don’t know what <code>‹make-recursion›</code> looks like. But for the factorial function, we do know what <code>‹fact-maker›</code> looks like. The strategy, then, is to extract the <code>‹fact-maker›</code>:</p>
@@ -257,7 +299,7 @@ the expected number of arguments does not match the given number
 4
 5</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-12"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-13"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
     <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
       <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
@@ -266,29 +308,9 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-12"><i class="far fa-copy"></i></button></div>
-</div>
-<p>from our current code:</p>
-<div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
-<pre>1
-2
-3
-4
-5</pre>
-</div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-13"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">n</span><span class="p">)</span></span>
-              <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
-                <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
-                <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
-  <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span> <span class="mi">3</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span> <span class="mi">4</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
-</pre>
-</div>
-</td></tr></tbody></table>
-</div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-13"><i class="far fa-copy"></i></button></div>
 </div>
-<p>Hopefully, what’s left is going to be <code>‹make-recursion›</code></p>
-<p>To extract <code>‹fact-maker›</code>, as a first step, we can avoid prepending <code>fact</code> at the callsites of <code>fact</code> inside the lambda function. Simply transform:</p>
+<p>from our current code:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
 <pre>1
 2
@@ -307,6 +329,26 @@ the expected number of arguments does not match the given number
 </div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-14"><i class="far fa-copy"></i></button></div>
 </div>
+<p>Hopefully, what’s left is going to be <code>‹make-recursion›</code></p>
+<p>To extract <code>‹fact-maker›</code>, as a first step, we can avoid prepending <code>fact</code> at the callsites of <code>fact</code> inside the lambda function. Simply transform:</p>
+<div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
+<pre>1
+2
+3
+4
+5</pre>
+</div>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-15"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">n</span><span class="p">)</span></span>
+              <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
+                <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
+                <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
+  <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span> <span class="mi">3</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span> <span class="mi">4</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
+</pre>
+</div>
+</td></tr></tbody></table>
+</div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-15"><i class="far fa-copy"></i></button></div>
+</div>
 <p>to</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
 <pre>1
@@ -316,7 +358,7 @@ the expected number of arguments does not match the given number
 5
 6</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-15"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">n</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-16"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">n</span><span class="p">)</span></span>
               <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span> <span class="n">n</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
                 <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
                   <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
@@ -326,7 +368,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-15"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-16"><i class="far fa-copy"></i></button></div>
 </div>
 <p>which shadows <code>fact</code> that consumes two arguments with <code>fact</code> that consumes one argument while maintaining the semantics. The body of the function is now similar to <code>‹fact-maker›</code>, especially for the highlighted part. What can we do next? We see that <code>fact</code> and <code>n</code> are both the formal parameters in the transformed code, whereas in <code>‹fact-maker›</code> they are separated. Straightforwardly, we can use <a href="https://en.wikipedia.org/wiki/Currying">currying</a> to separate the two apart. We of course need to change how we call the function as well:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -338,7 +380,7 @@ the expected number of arguments does not match the given number
 6
 7</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-16"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-17"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
               <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
                 <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span> <span class="n">n</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
                   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
@@ -349,7 +391,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-16"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-17"><i class="far fa-copy"></i></button></div>
 </div>
 <p>Notice that the let statement <code>(let ([fact ‹v›]) ...)</code> where <code>‹v›</code> is <code>(λ (n) ((fact fact) n))</code> can be lifted up without changing the semantics because <code>‹v›</code> doesn’t depend on the parameter <code>n</code>:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -361,7 +403,7 @@ the expected number of arguments does not match the given number
 6
 7</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-17"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-18"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
               <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span> <span class="n">n</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
                 <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
                   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
@@ -372,7 +414,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-17"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-18"><i class="far fa-copy"></i></button></div>
 </div>
 <p>Our highlighted code is now even more similar to the <code>‹fact-maker›</code>. What we want to do next is to somehow convert <code>(let ([fact ‹v›]) ‹body›)</code> into <code>(λ (fact) ‹body›)</code> and move <code>‹v›</code> somewhere else. That’s simply desugaring <code>let</code>!</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -385,7 +427,7 @@ the expected number of arguments does not match the given number
 7
 8</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-18"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-19"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
               <span class="paren"><span class="p">(</span><mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
                  <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
                    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
@@ -397,7 +439,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-18"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-19"><i class="far fa-copy"></i></button></div>
 </div>
 <p>and we finally have the <code>‹fact-maker›</code>!</p>
 <p>Our next mission is to obtain the <code>‹make-recursion›</code>. To make things tidy, let’s first abstract <code>‹fact-maker›</code> out as a variable named <code>fact-maker</code>:</p>
@@ -410,7 +452,7 @@ the expected number of arguments does not match the given number
 6
 7</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-19"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-20"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
                     <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
                       <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
                         <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
@@ -421,34 +463,9 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-19"><i class="far fa-copy"></i></button></div>
-</div>
-<p>Recall that <code>(‹make-recursion› fact-maker)</code> should produce the actual factorial function which consumes only one number as an argument. Right now we still have <code>((fact fact) 3)</code> instead of <code>(fact 3)</code>. We can fix this using shadowing like what we did earlier:</p>
-<div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
-<pre>1
-2
-3
-4
-5
-6
-7
-8</pre>
-</div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-20"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
-                    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
-                      <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
-                        <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
-                        <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
-  <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span> <span class="n">n</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
-    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
-      <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="mi">3</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="mi">4</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
-</pre>
-</div>
-</td></tr></tbody></table>
-</div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-20"><i class="far fa-copy"></i></button></div>
 </div>
-<p>There’s no <code>let</code> in lambda calculus, so we will reduce number of <code>let</code>s by fusing the two nested <code>let</code> together in a straightforward way:</p>
+<p>Recall that <code>(‹make-recursion› fact-maker)</code> should produce the actual factorial function which consumes only one number as an argument. Right now we still have <code>((fact fact) 3)</code> instead of <code>(fact 3)</code>. We can fix this using shadowing like what we did earlier:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
 <pre>1
 2
@@ -464,6 +481,31 @@ the expected number of arguments does not match the given number
                       <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
                         <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
                         <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
+  <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span> <span class="n">n</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
+    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
+      <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="mi">3</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="mi">4</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
+</pre>
+</div>
+</td></tr></tbody></table>
+</div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-21"><i class="far fa-copy"></i></button></div>
+</div>
+<p>There’s no <code>let</code> in lambda calculus, so we will reduce number of <code>let</code>s by fusing the two nested <code>let</code> together in a straightforward way:</p>
+<div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
+<pre>1
+2
+3
+4
+5
+6
+7
+8</pre>
+</div>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-22"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
+                    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
+                      <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
+                        <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
+                        <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact</span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span> <span class="n">n</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
                <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span> <span class="n">n</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
     <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="mi">3</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="mi">4</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
@@ -471,7 +513,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-21"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-22"><i class="far fa-copy"></i></button></div>
 </div>
 <p>As a final step, <code>‹make-recursion›</code> should consume <code>fact-maker</code> as an argument, so we can abstract <code>fact-maker</code> out:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -486,7 +528,7 @@ the expected number of arguments does not match the given number
  9
 10</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-22"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-23"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
                     <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
                       <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
                         <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
@@ -500,7 +542,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-22"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-23"><i class="far fa-copy"></i></button></div>
 </div>
 <p>And we are done! We have derived the <code>‹make-recursion›</code> as follows:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -508,14 +550,14 @@ the expected number of arguments does not match the given number
 2
 3</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-23"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact-maker</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-24"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact-maker</span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span> <span class="n">n</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">fact</span> <span class="n">fact</span><span class="p">)</span></span> <span class="n">n</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
 </pre>
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-23"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-24"><i class="far fa-copy"></i></button></div>
 </div>
 <p>Notice that there’s nothing inherent about the factorial function here. If we use the Fibonacci function as a starting point, we would end up with a term that is <a href="https://en.wikipedia.org/wiki/Lambda_calculus#Alpha_equivalence">$\alpha$-equivalent</a> to this <code>‹make-recursion›</code> as well. We will highlight this fact by $\alpha$-convert variable names to remove all references to the factorial function:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -523,14 +565,14 @@ the expected number of arguments does not match the given number
 2
 3</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-24"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-25"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">v</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span> <span class="n">v</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">v</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span> <span class="n">v</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
 </pre>
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-24"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-25"><i class="far fa-copy"></i></button></div>
 </div>
 <p>This <code>‹make-recursion›</code> is formally known as the <em>Z combinator</em>, and we will subsequently call it $Z$. It is one of the well-known <em>fixed-point combinator</em>s. The word <a href="https://wiki.haskell.org/Combinator"><em>combinator</em></a> means that there’s no free variable in $Z$. The word <a href="https://en.wikipedia.org/wiki/Fixed_point_(mathematics)"><em>fixed-point</em></a> means that $Z(f)$ is a solution to the equation $x = f(x)$ for any function $f$. That is, $Z(f) = f(Z(f))$. While we can see evidently that $Z$ is a combinator, it’s not clear that $Z(f) = f(Z(f))$ is true or how this is important. This topic will be further investigated in the next sections.</p>
 <p>Recall that the title of this section is <em>Deriving a fake Y combinator</em>. It’s fake because we actually derived the Z combinator, not the Y combinator. However, they are essentially the same. The difference of the two combinators will also be covered in the next sections.</p>
@@ -547,7 +589,7 @@ the expected number of arguments does not match the given number
  9
 10</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-25"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">Z</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-26"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">Z</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span>
            <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">v</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span> <span class="n">v</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
             <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">v</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span> <span class="n">v</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">fact-maker</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
@@ -561,7 +603,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-25"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-26"><i class="far fa-copy"></i></button></div>
 </div>
 <div class="highlight-container"><div class="highlight"><pre id="output-id-7">30</pre>
 </div>
@@ -577,7 +619,7 @@ the expected number of arguments does not match the given number
 4
 5</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-26"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-27"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
     <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
       <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
@@ -586,27 +628,9 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-26"><i class="far fa-copy"></i></button></div>
-</div>
-<p>What can we pass into $\text{fact-maker}$? It obviously consumes the factorial function! But provided that we don’t have the real factorial function already, the best we can do is to provide any other value instead. Say, we pass in a non-sensible value $42$. This results in:</p>
-<div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
-<pre>1
-2
-3
-4</pre>
-</div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-27"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
-  <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
-    <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
-    <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><mark class="highlight-focus"><span class="mi">42</span></mark> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span>
-</pre>
-</div>
-</td></tr></tbody></table>
-</div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-27"><i class="far fa-copy"></i></button></div>
 </div>
-<p>What we have here is the factorial function that only works on $n = 0$. For $n &gt; 0$, the highlighted $42$ will be used as a function value which results in an error. We will call this function $\text{fact}_0$.</p>
-<p>What else can we pass into $\text{fact-maker}$? We just obtained $\text{fact}_0 = \text{fact-maker}(42)$, so we can use it. This results in:</p>
+<p>What can we pass into $\text{fact-maker}$? It obviously consumes the factorial function! But provided that we don’t have the real factorial function already, the best we can do is to provide any other value instead. Say, we pass in a non-sensible value $42$. This results in:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
 <pre>1
 2
@@ -616,12 +640,30 @@ the expected number of arguments does not match the given number
 </td><td class="code"><div class="source"><pre class="racket" id="code-id-28"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
     <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
-    <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">fact0</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span>
+    <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><mark class="highlight-focus"><span class="mi">42</span></mark> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span>
 </pre>
 </div>
 </td></tr></tbody></table>
 </div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-28"><i class="far fa-copy"></i></button></div>
+</div>
+<p>What we have here is the factorial function that only works on $n = 0$. For $n &gt; 0$, the highlighted $42$ will be used as a function value which results in an error. We will call this function $\text{fact}_0$.</p>
+<p>What else can we pass into $\text{fact-maker}$? We just obtained $\text{fact}_0 = \text{fact-maker}(42)$, so we can use it. This results in:</p>
+<div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
+<pre>1
+2
+3
+4</pre>
+</div>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-29"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
+  <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
+    <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
+    <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._*))">*</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">fact0</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span>
+</pre>
+</div>
+</td></tr></tbody></table>
+</div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-29"><i class="far fa-copy"></i></button></div>
 </div>
 <p>Again, what we have here is the factorial function that works on $n \le 1$. Let’s call it $\text{fact}_1$. Next, we can pass $\text{fact}_1 = \text{fact-maker}(\text{fact-maker}(42))$ into $\text{fact-maker}$ to get $\text{fact}_2$. We can clearly see the trend here. $\text{fact-maker}^k(42) = \text{fact}_{k-1}$, the factorial function that works on $n \le k - 1$.</p>
 <p>In general, any recursion maker $f$ propels the computation one more level deeper.</p>
@@ -636,7 +678,7 @@ the expected number of arguments does not match the given number
 4
 5</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-29"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-30"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">fact</span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">n</span><span class="p">)</span></span>
     <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
       <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">1</span><span class="p">]</span></span>
@@ -645,7 +687,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-29"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-30"><i class="far fa-copy"></i></button></div>
 </div>
 <p>Recall that the Z combinator makes the recursion possible: $\text{fact} = Z(\text{fact-maker})$. Substituting this in the above equation, we obtain that $\text{fact-maker}(Z(\text{fact-maker})) = Z(\text{fact-maker})$.</p>
 <p>In general, for any recursion maker $f$, $Z(f) = f(Z(f))$. The importance of this identity is that $Z(f) = f(Z(f)) = f(f(Z(f))) = f(f(f(Z(f)))) = \dots$ which creates an infinite tower of the recursion maker $f$, making recursion possible.</p>
@@ -659,14 +701,14 @@ the expected number of arguments does not match the given number
 2
 3</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-30"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-31"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">v</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span> <span class="n">v</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">v</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span> <span class="n">v</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
 </pre>
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-30"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-31"><i class="far fa-copy"></i></button></div>
 </div>
 <p>Using <a href="https://en.wikipedia.org/wiki/Lambda_calculus#%CE%B7-conversion">$\eta$-conversion</a>, we obtain the Y combinator:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -674,14 +716,14 @@ the expected number of arguments does not match the given number
 2
 3</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-31"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-32"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span>
   <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
    <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
 </pre>
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-31"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-32"><i class="far fa-copy"></i></button></div>
 </div>
 <p>The $\eta$-conversion intuitively should preserve semantic equivalence. However, this is not totally true. In fact, any attempt to use <code>Y</code> will always result in an infinite loop in Racket (even though we have seen earlier that the Z combinator works)! We can manually step through the evaluation of <code>(Y make-fact)</code> to see what’s going on:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -714,7 +756,7 @@ the expected number of arguments does not match the given number
 27
 28</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-32"><span></span><span class="mf">1.</span>  <span class="paren"><span class="p">(</span><mark class="highlight-focus"><span class="n">Y</span></mark> <span class="n">make-fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-33"><span></span><span class="mf">1.</span>  <span class="paren"><span class="p">(</span><mark class="highlight-focus"><span class="n">Y</span></mark> <span class="n">make-fact</span><span class="p">)</span></span>
 <span class="n">==&gt;</span> <span class="paren"><span class="p">(</span><mark class="highlight-add"><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span></mark> <span class="n">make-fact</span><span class="p">)</span></span>
 
 <span class="mf">2.</span>  <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span> <mark class="highlight-focus"><span class="n">make-fact</span></mark><span class="p">)</span></span>
@@ -746,7 +788,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-32"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-33"><i class="far fa-copy"></i></button></div>
 </div>
 <p>While Racket evaluates the term <code>(Y make-fact)</code> exactly as described above, we can imagine another way to evaluate the term:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -769,7 +811,7 @@ the expected number of arguments does not match the given number
 17
 18</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-33"><span></span><span class="mf">1.</span>  <span class="paren"><span class="p">(</span><mark class="highlight-focus"><span class="n">Y</span></mark> <span class="n">make-fact</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-34"><span></span><span class="mf">1.</span>  <span class="paren"><span class="p">(</span><mark class="highlight-focus"><span class="n">Y</span></mark> <span class="n">make-fact</span><span class="p">)</span></span>
 <span class="n">==&gt;</span> <span class="paren"><span class="p">(</span><mark class="highlight-add"><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span></mark> <span class="n">make-fact</span><span class="p">)</span></span>
 
 <span class="mf">2.</span>  <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span> <span class="n">make-fact</span><span class="p">)</span></span></mark>
@@ -791,9 +833,9 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-33"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-34"><i class="far fa-copy"></i></button></div>
 </div>
-<p>In this evaluation trace, <code>(Y make-fact)</code> successfully evaluates to the factorial function! The difference of these two evaluation traces is due to <a href="https://en.wikipedia.org/wiki/Evaluation_strategy"><em>evaluation strategies</em></a><label for="margin-note-1" class="margin-note-toggle margin-note-number"></label><input type="checkbox" id="margin-note-1" class="margin-note-toggle"/><object class="margin-note"><div class="margin-note-box" decode="exclude-paragraph">I personally think that this Wikipedia page is poorly written (as of December 2018), so I will try to summarize the page in this section.</div>
+<p>In this evaluation trace, <code>(Y make-fact)</code> successfully evaluates to the factorial function! The difference of these two evaluation traces is due to <a href="https://en.wikipedia.org/wiki/Evaluation_strategy"><em>evaluation strategies</em></a><label for="margin-note-6" class="margin-note-toggle margin-note-number"></label><input type="checkbox" id="margin-note-6" class="margin-note-toggle"/><object class="margin-note"><div class="margin-note-box" decode="exclude-paragraph">I personally think that this Wikipedia page is poorly written (as of December 2018), so I will try to summarize the page in this section.</div>
 </object>, which describes <em>what reducible term</em> (redex) should be <a href="https://en.wikipedia.org/wiki/Lambda_calculus#%CE%B2-reduction">$\beta$-reduced</a>.</p>
 <p>Most programming languages, including Racket, uses the first evaluation strategy presented above which results in an infinite loop for <code>(Y make-fact)</code>. The strategy is named <em>call-by-value</em>, which always reduces the <em>leftmost-innermost</em> redex (outside of lambda functions). As another example, the strategy would evaluate <code>(double (double 1))</code> where <code>double</code> is defined as <code>(λ (x) (+ x x))</code> like this:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -802,7 +844,7 @@ the expected number of arguments does not match the given number
 3
 4</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-34"><span></span><span class="paren"><span class="p">(</span><span class="n">double</span> <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span></mark><span class="p">)</span></span> <span class="n">==&gt;</span> <span class="paren"><span class="p">(</span><span class="n">double</span> <mark class="highlight-add"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></span></mark><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-35"><span></span><span class="paren"><span class="p">(</span><span class="n">double</span> <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span></mark><span class="p">)</span></span> <span class="n">==&gt;</span> <span class="paren"><span class="p">(</span><span class="n">double</span> <mark class="highlight-add"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></span></mark><span class="p">)</span></span>
 <span class="paren"><span class="p">(</span><span class="n">double</span> <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></span></mark><span class="p">)</span></span>    <span class="n">==&gt;</span> <span class="paren"><span class="p">(</span><span class="n">double</span> <mark class="highlight-add"><span class="mi">2</span></mark><span class="p">)</span></span>
 <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">2</span><span class="p">)</span></span></mark>          <span class="n">==&gt;</span> <mark class="highlight-add"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">2</span> <span class="mi">2</span><span class="p">)</span></span></mark>
 <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">2</span> <span class="mi">2</span><span class="p">)</span></span></mark>             <span class="n">==&gt;</span> <mark class="highlight-add"><span class="mi">4</span></mark>
@@ -810,7 +852,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-34"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-35"><i class="far fa-copy"></i></button></div>
 </div>
 <p>The second strategy presented above which successfully evaluates <code>(Y make-fact)</code> to the factorial function is named <em>call-by-name</em>. The strategy always reduces the <em>rightmost-outermost</em> redex (outside of lambda functions). It would evaluate <code>(double (double 1))</code> like this:</p>
 <div class="highlight-container"><div class="highlight"><table class="sourcetable"><tbody><tr><td class="linenos"><div class="linenodiv">
@@ -821,7 +863,7 @@ the expected number of arguments does not match the given number
 5
 6</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-35"><span></span><mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="n">double</span> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span></mark>       <span class="n">==&gt;</span> <mark class="highlight-add"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span></mark>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-36"><span></span><mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="n">double</span> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span></mark>       <span class="n">==&gt;</span> <mark class="highlight-add"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span></mark>
 <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span></mark> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span> <span class="n">==&gt;</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <mark class="highlight-add"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></span></mark> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span>
 <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></span></mark> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span>    <span class="n">==&gt;</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <mark class="highlight-add"><span class="mi">2</span></mark> <span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span>
 <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">2</span> <mark class="highlight-focus"><span class="paren"><span class="p">(</span><span class="n">double</span> <span class="mi">1</span><span class="p">)</span></span></mark><span class="p">)</span></span>          <span class="n">==&gt;</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">2</span> <mark class="highlight-add"><span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="mi">1</span> <span class="mi">1</span><span class="p">)</span></span></mark><span class="p">)</span></span>
@@ -831,7 +873,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-35"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-36"><i class="far fa-copy"></i></button></div>
 </div>
 <p>We have seen earlier that different evaluation stategies might not evaluate a term to the same result. This is disconcerting. Fortunately, the <a href="https://en.wikipedia.org/wiki/Church%E2%80%93Rosser_theorem">Church-Rosser theorem</a> guarantees that given a term $t$, <em>if two strategies successfully evaluate $t$ to values</em>, then the two values from both strategies are equal, as we can see from the <code>(double (double 1))</code> example. The only case that two evaluation strategies would evaluate a term to different results is when one of them doesn’t terminate, which is exactly what happens with the Y combinator.</p>
 <p>There are advantages and disadvantages for each evaluation strategies. The call by name strategy, for example, has a beautiful property that if a term could be evaluated to a value by <em>some</em> evaluation strategy, then the call by name strategy will be able to evaluate the term to the value as well. The disadvantages are (1) it’s not really efficient, taking 6 steps to evaluate <code>(double (double 1))</code> while the call by value strategy can evaluate the term in only 4 steps, and (2) it doesn’t interact well with mutation which is a feature that exists in most programming languages. This is the reason why most programming languages use the call by value strategy.</p>
@@ -850,7 +892,7 @@ the expected number of arguments does not match the given number
 11
 12</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-36"><span></span><span class="kn">#lang </span><span class="nn">lazy</span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-37"><span></span><span class="kn">#lang </span><span class="nn">lazy</span>
 
 <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">Y</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">f</span><span class="p">)</span></span>
            <span class="paren"><span class="p">(</span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">x</span><span class="p">)</span></span> <span class="paren"><span class="p">(</span><span class="n">f</span> <span class="paren"><span class="p">(</span><span class="n">x</span> <span class="n">x</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span>
@@ -866,13 +908,13 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-36"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-37"><i class="far fa-copy"></i></button></div>
 </div>
 <div class="highlight-container"><div class="highlight"><pre id="output-id-8">30</pre>
 </div>
 <div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#output-id-8"><i class="far fa-copy"></i></button></div>
 </div>
-<p>It appears that call-by-value and call-by-name are also known as <em>applicative-order</em> and <em>normal-order</em> respectively<label for="margin-note-2" class="margin-note-toggle margin-note-number"></label><input type="checkbox" id="margin-note-2" class="margin-note-toggle"/><object class="margin-note"><div class="margin-note-box" decode="exclude-paragraph"><a href="http://www.cs.cornell.edu/courses/cs6110/2014sp/Lectures/lec04.pdf">Some sources</a> indicate that they are different because the applicative-order and normal-order strategy can perform reduction inside lambda functions, but this distinction doesn’t really matter for our purpose.</div>
+<p>It appears that call-by-value and call-by-name are also known as <em>applicative-order</em> and <em>normal-order</em> respectively<label for="margin-note-7" class="margin-note-toggle margin-note-number"></label><input type="checkbox" id="margin-note-7" class="margin-note-toggle"/><object class="margin-note"><div class="margin-note-box" decode="exclude-paragraph"><a href="http://www.cs.cornell.edu/courses/cs6110/2014sp/Lectures/lec04.pdf">Some sources</a> indicate that they are different because the applicative-order and normal-order strategy can perform reduction inside lambda functions, but this distinction doesn’t really matter for our purpose.</div>
 </object>. For this reason, the Z combinator is also known as the applicative-order Y combinator.</p>
 <h2>Y and me</h2>
 <p>I learned the Y combinator two years ago from the <a href="https://cs.brown.edu/courses/cs173/">PL class</a> taught by <a href="https://cs.brown.edu/~sk/">Shriram Krishnamurthi</a>. One great explanation (which Shriram pointed us to) is <a href="http://felleisen.org/matthias/">Matthias Felleisen</a>’s <a href="https://xivilization.net/~marek/binaries/Y.pdf"><i>A Lecture of the Why of Y</i></a>, which similarly attempts to derive the Y combinator. However, the explanation that corresponds to the “Enabling recursion” section goes in a much slower pace and implicitly contains some elements from the “Fixed point” section. The strength of this approach in my opinion is that it crucially uses the fixed-point identity $Y(f) = f(Y(f))$ to justify the “self-application trick” in the derivation right away, so it motivates really well why $Y(f) = f(Y(f))$ is important. The approach that I use, on the other hand, simply focuses on where things are bound and how do we direct values to appropriate places, which results in a simpler explanation in my opinion. I also make use of <code>let</code> a lot, which I think helps a lot with readability, with the weakness being that I also need to talk about desugaring.</p>
@@ -884,7 +926,7 @@ the expected number of arguments does not match the given number
 4
 5</pre>
 </div>
-</td><td class="code"><div class="source"><pre class="racket" id="code-id-37"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">triangle</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">triangle</span> <span class="n">n</span><span class="p">)</span></span>
+</td><td class="code"><div class="source"><pre class="racket" id="code-id-38"><span></span><span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/let.html#(form._((lib._racket/private/letstx-scheme..rkt)._let))">let</a></span> <span class="paren"><span class="p">(</span><span class="paren"><span class="p">[</span><span class="n">triangle</span> <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/lambda.html#(form._((lib._racket/private/base..rkt)._~ce~bb))">λ</a></span> <span class="paren"><span class="p">(</span><span class="n">triangle</span> <span class="n">n</span><span class="p">)</span></span>
                   <span class="paren"><span class="p">(</span><span class="k"><a href="http://docs.racket-lang.org/reference/case.html#(form._((lib._racket/private/more-scheme..rkt)._case))">case</a></span> <span class="n">n</span>
                     <span class="paren"><span class="p">[</span><span class="paren"><span class="p">(</span><span class="mi">0</span><span class="p">)</span></span> <span class="mi">0</span><span class="p">]</span></span>
                     <span class="paren"><span class="p">[</span><span class="k"><a href="http://docs.racket-lang.org/reference/if.html#(form._((lib._racket/private/letstx-scheme..rkt)._else))">else</a></span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._+))">+</a></span> <span class="n">n</span> <span class="paren"><span class="p">(</span><span class="n">triangle</span> <span class="n">triangle</span> <span class="paren"><span class="p">(</span><span class="nb"><a href="http://docs.racket-lang.org/reference/generic-numbers.html#(def._((quote._~23~25kernel)._-))">-</a></span> <span class="n">n</span> <span class="mi">1</span><span class="p">)</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span><span class="p">)</span></span><span class="p">]</span></span><span class="p">)</span></span>
@@ -893,7 +935,7 @@ the expected number of arguments does not match the given number
 </div>
 </td></tr></tbody></table>
 </div>
-<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-37"><i class="far fa-copy"></i></button></div>
+<div class="copy-button"><button type="button" class="btn btn-outline-secondary btn-sm" data-clipboard-target="#code-id-38"><i class="far fa-copy"></i></button></div>
 </div>
 <div class="highlight-container"><div class="highlight"><pre id="output-id-9">55</pre>
 </div>
