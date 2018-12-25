@@ -1,0 +1,6 @@
+#lang pollen
+
+@(define-meta title "Tag: $tag")
+@(define-meta type index)
+
+@(! (map (curry make-post #:see-more? #t) (list $posts)))

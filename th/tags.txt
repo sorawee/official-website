@@ -1,0 +1,1 @@
+#hash(("blog/2017/01-03-rainbow-parens.poly.pm" . (racket blog pygments)) ("blog/2017/10-05-deriving-Y.poly.pm" . (programming-languages y-combinator)))
