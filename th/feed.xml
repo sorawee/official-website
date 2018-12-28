@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title>Sorawee Porncharoenwase</title><link rel="self" href="https://homes.cs.washington.edu/~sorawee/"/><generator uri="http://pollenpub.com/">Pollen (custom feed)</generator><id>https://homes.cs.washington.edu/~sorawee/</id><updated>2018-12-24T20:43:40-08:00</updated><author><name>Sorawee Porncharoenwase</name><email>&#115;&#111;&#114;&#97;&#119;&#101;&#101;&#64;&#99;&#115;&#46;&#119;&#97;&#115;&#104;&#105;&#110;&#103;&#116;&#111;&#110;&#46;&#101;&#100;&#117;</email></author><entry><author><name>Sorawee Porncharoenwase</name></author><published>2017-10-05T00:00:00-07:00</published><updated>2018-12-09T00:00:00-08:00</updated><title type="text">ตามล่าหา Y combinator</title><link rel="alternate" href="https://homes.cs.washington.edu/~sorawee/blog/2017/10-05-deriving-Y.html"/><id>https://homes.cs.washington.edu/~sorawee/blog/2017/10-05-deriving-Y.html</id><summary type="html"><![CDATA[
+<feed xml:lang="en-us" xmlns="http://www.w3.org/2005/Atom"><title>Sorawee Porncharoenwase</title><link rel="self" href="https://homes.cs.washington.edu/~sorawee/"/><generator uri="http://pollenpub.com/">Pollen (custom feed)</generator><id>https://homes.cs.washington.edu/~sorawee/</id><updated>2018-12-28T08:26:01-08:00</updated><author><name>Sorawee Porncharoenwase</name><email>&#115;&#111;&#114;&#97;&#119;&#101;&#101;&#64;&#99;&#115;&#46;&#119;&#97;&#115;&#104;&#105;&#110;&#103;&#116;&#111;&#110;&#46;&#101;&#100;&#117;</email></author><entry><author><name>Sorawee Porncharoenwase</name></author><published>2017-10-05T00:00:00-07:00</published><updated>2018-12-09T00:00:00-08:00</updated><title type="text">ตามล่าหา Y combinator</title><link rel="alternate" href="https://homes.cs.washington.edu/~sorawee/blog/2017/10-05-deriving-Y.html"/><id>https://homes.cs.washington.edu/~sorawee/blog/2017/10-05-deriving-Y.html</id><summary type="html"><![CDATA[
 
 
 
@@ -15,7 +15,46 @@
 
 
 
-Y combinator ดูเหมือนจะเป็นเวทมนตร์มหัศจรรย์ที่ทำให้เราสามารถเขียน<dfn>ฟังก์ชันเวียนเกิด</dfn> (recursive function) ใน<a href="https://th.wikipedia.org/wiki/แคลคูลัสแลมบ์ดา"><dfn>แคลคูลัสแลมบ์ดา</dfn></a> (lambda calculus) ได้ เนื่องจากความมหัศจรรย์ของมัน หลาย ๆ คนจึงพยายามที่จะอธิบายว่ามันคืออะไรและทำงานได้อย่างไร แต่เรารู้สึกว่าคำอธิบายส่วนใหญ่นั้นน่าผิดหวัง เพราะมักจะกำหนด Y combinator ขึ้นมาตั้งแต่แรกและเพียงแค่แสดงให้เห็นว่ามันทำงานถูกต้อง ซึ่งไม่ได้แสดงให้เห็นว่า<em>เราจะสามารถคิดหา Y combinator ขึ้นมาเองได้อย่างไร</em> คำอธิบายอีกจำพวกพยายามที่จะตอบโจทย์นี้ แต่ก็มักจะมีประโยคเช่น “เราไม่รู้ว่าเราควรจะใส่อะไรเข้าไปเป็นพารามิเตอร์ของฟังก์ชันนี้ ทำไมถึงไม่ลองใส่ตัวเองเข้าไปดูล่ะ! และเห็นไหมว่ามันทำงานได้อย่างที่เราต้องการ!” ซึ่งเรารู้สึกว่ามันควรจะมีวิธีอธิบายที่ไม่ต้องใช้การทดลองมั่วแบบนี้ได้ จึงเป็นที่มาของโพสต์นี้
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Y combinator ดูเหมือนจะเป็นเวทมนตร์มหัศจรรย์ที่ทำให้เราสามารถเขียน<dfn>ฟังก์ชันเวียนเกิด</dfn> (recursive function) ใน<a href="https://th.wikipedia.org/wiki/แคลคูลัสแลมบ์ดา"><dfn>แคลคูลัสแลมบ์ดา</dfn></a> (lambda calculus) ได้ เนื่องจากความมหัศจรรย์ของมัน หลาย ๆ คนจึงพยายามที่จะอธิบายว่ามันคืออะไรและทำงานได้อย่างไร แต่เรารู้สึกว่าคำอธิบายส่วนใหญ่นั้นน่าผิดหวัง เพราะมักจะกำหนด Y combinator ขึ้นมาตั้งแต่แรกและเพียงแค่แสดงให้เห็นว่ามันทำงานถูกต้อง ซึ่งไม่ได้แสดงให้เห็นว่า<em>เราจะสามารถคิดหา Y combinator ขึ้นมาเองได้อย่างไร</em> คำอธิบายอีกจำพวกพยายามที่จะตอบโจทย์นี้ แต่ก็มักจะมีประโยคเช่น “เราไม่รู้ว่าเราควรจะใส่อะไรเข้าไปเป็นพารามิเตอร์ของฟังก์ชันนี้ ทำไมถึงไม่ลองใส่ตัวเองเข้าไปดูล่ะ! และเห็นไหมว่ามันทำงานได้อย่างที่เราต้องการ!” ซึ่งเรารู้สึกว่ามันควรจะมีวิธีอธิบายที่ไม่ต้องใช้การทดลองมั่วแบบนี้ได้ จึงเป็นที่มาของบทความนี้
 
 <p><a href="https://homes.cs.washington.edu/~sorawee/blog/2017/10-05-deriving-Y.html">Click here to read <i>ตามล่าหา Y combinator</i></a></p>]]></summary></entry><entry><author><name>Sorawee Porncharoenwase</name></author><published>2017-01-03T00:00:00-08:00</published><updated>2018-12-06T00:00:00-08:00</updated><title type="text">Rainbow in Pygments</title><link rel="alternate" href="https://homes.cs.washington.edu/~sorawee/blog/2017/01-03-rainbow-parens.html"/><id>https://homes.cs.washington.edu/~sorawee/blog/2017/01-03-rainbow-parens.html</id><summary type="html"><![CDATA[I tried to learn <a href="https://en.wikipedia.org/wiki/Continuation">continuations</a> yesterday. This led me to a <a href="http://community.schemewiki.org/?p=composable-continuations-tutorial">tutorial on composable continuations</a> in schemewiki.org. It explains things nicely, but what really intrigues me is something completely different: <a href="https://www.emacswiki.org/emacs/RainbowDelimiters">rainbow parentheses</a> on mouse hovering.
 

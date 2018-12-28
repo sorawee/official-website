@@ -6785,7 +6785,7 @@ pre, code, kbd, samp, .filebox > .filename, html .highlight {
   background-color: #f7f7f7;
   color: inherit; }
 
-.filebox > .filename, .coq-buttons {
+.filebox > .filename {
   background-color: #f2f2f2; }
 
 a:hover, a:hover code {
@@ -6806,6 +6806,19 @@ article img {
 
 /* End Section */
 /* Section: tag */
+blockquote {
+  padding: 0 1rem;
+  margin-left: 0;
+  color: #819198;
+  border-left: 0.3rem solid #dce6f0; }
+
+ins {
+  text-decoration: none;
+  background-color: #ccf2dd; }
+
+figure {
+  border: 1px solid #ccc; }
+
 pre {
   white-space: pre;
   width: inherit;
@@ -6900,10 +6913,6 @@ html .highlight {
   opacity: 0.5; }
 
 /* End Section */
-#content-title--index-html h2 span {
-  font-size: 70%;
-  padding-left: 1rem; }
-
 .pubdate, .update {
   font-style: italic; }
 
@@ -7028,7 +7037,7 @@ label.margin-note-toggle:not(.margin-note-number) {
 /* End Section */
 /* Add line separator between linenos and code */
 table.sourcetable td.linenos {
-  border-right: thin solid #ddd; }
+  border-right: thin solid #ccc; }
 
 /* Make pre in sourcetable not screwed up */
 table.sourcetable pre {
@@ -7042,101 +7051,135 @@ table.sourcetable {
 
 /* Section: parentheses highlight
    Adapted from: http://community.schemewiki.org/?wiki-css */
-.highlight pre.racket span.paren:hover {
+/* level 0 */
+pre.racket span.paren:hover {
   background-color: rgba(255, 207, 207, 0.75); }
 
-.highlight pre.racket span.paren span.paren:hover {
+/* level 1 */
+pre.racket span.paren span.paren:hover {
   background-color: rgba(207, 255, 207, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren:hover {
+/* level 2 */
+pre.racket span.paren span.paren span.paren:hover {
   background-color: rgba(207, 207, 255, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren:hover {
+/* level 3 */
+pre.racket span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(207, 255, 255, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 4 */
+pre.racket span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(255, 207, 255, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 5 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(255, 255, 207, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 6 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(180, 225, 234, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 7 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(189, 234, 180, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 8 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(234, 212, 180, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 9 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(244, 208, 236, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 10 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(208, 217, 244, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 11 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(255, 207, 207, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 12 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(207, 255, 207, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 13 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(207, 207, 255, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 14 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(207, 255, 255, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 15 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(255, 207, 255, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 16 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(255, 255, 207, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 17 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(180, 225, 234, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 18 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(189, 234, 180, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 19 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(234, 212, 180, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 20 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(244, 208, 236, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 21 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(208, 217, 244, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 22 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(255, 207, 207, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 23 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(207, 255, 207, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 24 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(207, 207, 255, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 25 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(207, 255, 255, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 26 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(255, 207, 255, 0.75); }
 
-.highlight pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
+/* level 27 */
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:hover {
   background-color: rgba(255, 255, 207, 0.75); }
 
-pre.racket SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren SPAN.paren span.paren:before {
-  content: "{{27 levels of indentation?! Yikes!}}"; }
+pre.racket span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren span.paren:before {
+  content: "{{28 levels of indentation?! Yikes!}}"; }
 
 /* End Section */
 /* Section: Highlight */
 mark {
-  padding: 3px; }
+  padding: 3px;
+  padding-left: 0;
+  padding-right: 0; }
 
 mark.highlight-focus {
   background-color: rgba(255, 255, 0, 0.7);
   border: 1px dashed #999; }
+
+mark.highlight-super-focus {
+  background-color: initial;
+  border: 3px solid; }
 
 mark.highlight-add {
   background-color: #ccf2dd;
@@ -7151,49 +7194,23 @@ mark.highlight-remove {
 .text-type-error {
   color: red; }
 
+.text-type-timeout {
+  color: purple;
+  font-weight: 700; }
+
 /* End Section */
-/* Section: Coq */
-h3.coq-tactic, .coq-usage, .coq-use-when, .coq-relevant, .coq-caveat, .coq-desc {
-  margin: 1em 0; }
-
-.inverted-tactic {
-  display: list-item;
-  list-style-position: inside;
-  margin: 10px; }
-
-h3.coq-tactic {
-  margin-top: 5ex; }
-
-#content-title--coq-tactics-index-html h2 {
-  font-size: 2.2rem; }
-
-.coq-box {
-  display: flex;
-  margin-bottom: 1ex; }
-
-.coq-box .highlight {
-  margin-bottom: 0; }
-
-@media (min-width: 768px) {
-  .coq-script {
-    border-right: 1px solid #ddd; } }
-.coq-pane, .coq-script {
-  flex-grow: 1; }
-
-.coq-pane div, .coq-script div {
-  height: 100%; }
-
-.coq-pane .linenos {
+/* Section: Headings */
+a.self-ref {
   display: none; }
 
-.coq-buttons {
-  padding: 0.5rem; }
+h2:hover > a.self-ref {
+  display: inline; }
 
-.coq-pane.show-all {
-  display: none; }
+a.self-ref:hover {
+  background-color: inherit; }
 
-.coq-pane.show-all.show-0 {
-  display: block; }
+a.xref {
+  font-style: italic; }
 
 /* End Section */
 

@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAOA,YAAa;EAET,gBAAgB,EAAE,OAAe;;ACJrC,kBAAkB;AAClB,+EAAgF;EAC5E,MAAM,EAAE,KAAK;;AAGjB,gBAAiB;EACb,OAAO,EAAE,SAAS;EAClB,mBAAmB,EAAE,MAAM;EAC3B,MAAM,EAAE,IAAI;;AAGhB,aAAc;EACV,UAAU,EAAE,GAAG;;AAGnB,uBAAwB;EACpB,SAAS,ECsPiB,IAAmB;;ADnPjD,QAAS;EACL,OAAO,EAAE,IAAI;EACb,aAAa,EAAE,GAAG;;AAGtB,mBAAoB;EAChB,aAAa,EAAE,CAAC;;AE8BhB,yBAAyB;EF1BzB,WAAY;IACR,YAAY,EAAE,cAAc;AAIpC,sBAAuB;EACnB,SAAS,EAAE,CAAC;;AAGhB,8BAA+B;EAC3B,MAAM,EAAE,IAAI;;AAGhB,kBAAmB;EACf,OAAO,EAAE,IAAI;;AAGjB,YAAa;EAET,OAAO,EAAE,MAAM;;AAGnB,kBAAmB;EACf,OAAO,EAAE,IAAI;;AAGjB,yBAA0B;EACtB,OAAO,EAAE,KAAK;;AAGlB,iBAAiB",
+"sources": ["../scss/_base.scss","../scss/coq-tactics.scss","../../node_modules/bootstrap/scss/_variables.scss","../../node_modules/bootstrap/scss/mixins/_breakpoints.scss"],
+"names": [],
+"file": "coq-tactics.css"
+}

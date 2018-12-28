@@ -1,0 +1,49 @@
+.coq-buttons {
+  background-color: #f2f2f2; }
+
+/* Section: Coq */
+h3.coq-tactic, .coq-usage, .coq-use-when, .coq-relevant, .coq-caveat, .coq-desc {
+  margin: 1em 0; }
+
+.inverted-tactic {
+  display: list-item;
+  list-style-position: inside;
+  margin: 10px; }
+
+h3.coq-tactic {
+  margin-top: 5ex; }
+
+main.container > div h2 {
+  font-size: 2rem; }
+
+.coq-box {
+  display: flex;
+  margin-bottom: 1ex; }
+
+.coq-box .highlight {
+  margin-bottom: 0; }
+
+@media (min-width: 768px) {
+  .coq-script {
+    border-right: 1px solid #ccc; } }
+.coq-pane, .coq-script {
+  flex-grow: 1; }
+
+.coq-pane div, .coq-script div {
+  height: 100%; }
+
+.coq-pane .linenos {
+  display: none; }
+
+.coq-buttons {
+  padding: 0.5rem; }
+
+.coq-pane.show-all {
+  display: none; }
+
+.coq-pane.show-all.show-0 {
+  display: block; }
+
+/* End Section */
+
+/*# sourceMappingURL=coq-tactics.css.map */
